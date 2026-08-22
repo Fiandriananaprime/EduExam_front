@@ -2,36 +2,39 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { loginRequest } from "../api/authApi";
-
+import { useToast } from "../context/ToastContext";
 const Login = () =>  {
+    const {showToast} = useToast();
+
     const navigate = useNavigate();
     const { login } = useAuth();
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
 
     const handleSubmit = async (e) => {
     e.preventDefault();
 
-    setError("");
     setLoading(true);
 
     try {
         const data = await loginRequest(email, password);
 
         localStorage.setItem("token", data.token);
-
+        localStorage.setItem("role", data.user.role)
         login(data.user);
 
-        if (data.user.role === "student") {
+        if (data.user.role === "STUDENT") {
         navigate("/student");
-        } else if (data.user.role === "admin") {
+        } else if (data.user.role === "ADMIN") {
         navigate("/admin");
         }
+
+        showToast(`Welcome ${data.user.firstName}` , 'success')
     } catch (error) {
-        setError(error.message);
+        showToast(error.response?.data?.message || 'Une erreur est survenue',
+        'error')
     } finally {
         setLoading(false);
     }
