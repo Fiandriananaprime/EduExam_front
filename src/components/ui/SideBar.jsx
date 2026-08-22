@@ -1,4 +1,5 @@
-import { LogOut } from 'lucide-react';
+import { LogOut, Menu } from 'lucide-react';
+import { useState } from 'react';
 
 export default function Sidebar({
   navItems = [],
@@ -6,15 +7,21 @@ export default function Sidebar({
   currentView,
   onNavigate,
   onLogout,
-  isOpen,
-  onClose,
   role
 }) {
+  const [isOpen,setIsOpen] = useState(false);
   return (
     <>
+      <button
+        type="button"
+        onClick={() => setIsOpen(true)}
+        className="lg:hidden fixed top-4 left-4 z-10 p-2 bg-paper border border-ink rounded-md text-ink"
+      >
+        <Menu className="w-5 h-5" />
+      </button>
       <aside
         className={`
-          fixed inset-y-0 left-0 z-30 w-60 flex flex-col bg-ink
+          fixed inset-y-0 left-0 z-30 w-60 h-screen flex flex-col bg-ink
           transform transition-transform duration-200 ease-in-out
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
           lg:relative lg:translate-x-0
@@ -39,7 +46,7 @@ export default function Sidebar({
                 key={item.id}
                 onClick={() => {
                   onNavigate(item.id);
-                  onClose();
+                  setIsOpen(false);
                 }}
                 className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-left ${
                   active
@@ -84,7 +91,7 @@ export default function Sidebar({
       {isOpen && (
         <div
           className="fixed inset-0 z-20 bg-ink/40 lg:hidden"
-          onClick={onClose}
+          onClick={() => setIsOpen(false)}
         />
       )}
     </>
