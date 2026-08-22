@@ -16,6 +16,7 @@ import StudentExamResult from "./pages/student/StudentExamResult";
 import StudentResults from "./pages/student/StudentResults";
 
 import ProtectedRoute from "./security/ProtectedRoute";
+import Layout from "./components/Layout";
 
 import Test from "./components/ui/SideBar"
 const router = createBrowserRouter([
@@ -29,54 +30,64 @@ const router = createBrowserRouter([
   },
   {
     element: <ProtectedRoute allowedRoles={["admin"]} />,
-    children: [
+    children:[
       {
-        path: "/admin",
-        element: <AdminDashboard />,
-      },
-      {
-        path: "/admin/students",
-        element: <AdminStudents />,
-      },
-      {
-        path: "/admin/courses",
-        element: <AdminCourses />,
-      },
-      {
-        path: "/admin/exams",
-        element: <AdminExams />,
-      },
-      {
-        path: "/admin/exams/:id/questions",
-        element: <AdminQuestions />,
-      },
-      {
-        path: "/admin/exams/:id/results",
-        element: <AdminExamResults />,
-      },
-    ],
+        element:<Layout />,
+        children: [
+          {
+            path: "/admin",
+            element: <AdminDashboard />,
+          },
+          {
+            path: "/admin/students",
+            element: <AdminStudents />,
+          },
+          {
+            path: "/admin/courses",
+            element: <AdminCourses />,
+          },
+          {
+            path: "/admin/exams",
+            element: <AdminExams />,
+          },
+          {
+            path: "/admin/exams/:id/questions",
+            element: <AdminQuestions />,
+          },
+          {
+            path: "/admin/exams/:id/results",
+            element: <AdminExamResults />,
+          },
+        ],
+      }
+    ]
   },
 
   {
     element: <ProtectedRoute allowedRoles={["student"]} />,
     children: [
       {
-        path: "/student",
-        element: <StudentExams />,
-      },
-      {
-        path: "/student/exams/:id",
-        element: <StudentExam />,
-      },
-      {
-        path: "/student/exams/:id/result",
-        element: <StudentExamResult />,
-      },
-      {
-        path: "/student/results",
-        element: <StudentResults />,
-      },
-    ],
+        element:<Layout />,
+        children: [
+          {
+            path: "/student",
+            element: <StudentExams />,
+          },
+          {
+            path: "/student/exams/:id",
+            element: <StudentExam />,
+          },
+          {
+            path: "/student/exams/:id/result",
+            element: <StudentExamResult />,
+          },
+          {
+            path: "/student/results",
+            element: <StudentResults />,
+          },
+        ],
+      }
+    ]
   },
 
   {

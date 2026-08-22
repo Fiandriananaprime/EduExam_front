@@ -22,7 +22,6 @@ const Login = () =>  {
         const data = await loginRequest(email, password);
 
         localStorage.setItem("token", data.token);
-
         login(data.user);
 
         if (data.user.role === "student") {
