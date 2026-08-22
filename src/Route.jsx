@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 
 import Login from "./pages/Login";
 import Unauthorized from "./pages/Unauthorized";
@@ -15,14 +15,17 @@ import StudentExam from "./pages/student/StudentExam";
 import StudentExamResult from "./pages/student/StudentExamResult";
 import StudentResults from "./pages/student/StudentResults";
 
-import ProtectedRoute from "./security/ProtecteRoute";
+import ProtectedRoute from "./security/ProtectedRoute";
 
 const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Navigate to="/login" replace />,
+  },
   {
     path: "/login",
     element: <Login />,
   },
-
   {
     element: <ProtectedRoute allowedRoles={["admin"]} />,
     children: [
