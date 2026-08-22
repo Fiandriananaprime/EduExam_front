@@ -37,7 +37,8 @@ const AuthContext = createContext(null);
     </AuthContext.Provider>
   );
 }
-export default AuthProvider;
-export function useAuth() {
+
+const useAuth = () => {
   return useContext(AuthContext);
 }
+export {AuthProvider , useAuth}

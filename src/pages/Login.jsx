@@ -24,9 +24,9 @@ const Login = () =>  {
         localStorage.setItem("token", data.token);
         login(data.user);
 
-        if (data.user.role === "student") {
+        if (data.user.role === "STUDENT") {
         navigate("/student");
-        } else if (data.user.role === "admin") {
+        } else if (data.user.role === "ADMIN") {
         navigate("/admin");
         }
     } catch (error) {
