@@ -29,7 +29,7 @@ const router = createBrowserRouter([
     element: <Login />,
   },
   {
-    element: <ProtectedRoute allowedRoles={["admin"]} />,
+    element: <ProtectedRoute allowedRoles={"ADMIN"} />,
     children:[
       {
         element:<Layout />,
@@ -64,7 +64,7 @@ const router = createBrowserRouter([
   },
 
   {
-    element: <ProtectedRoute allowedRoles={["student"]} />,
+    element: <ProtectedRoute allowedRoles={"STUDENT"} />,
     children: [
       {
         element:<Layout />,

@@ -24,7 +24,7 @@ const NAV_CONFIG = {
   ],
 };
 
-export default function Sidebar() {
+ const Sidebar =() => {
   const { user, logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   
@@ -67,7 +67,9 @@ export default function Sidebar() {
         {/* Principal navbar*/}
         <nav className="flex-1 py-4 px-3 space-y-0.5 overflow-y-auto">
           {navItems.map((item) => {
-            const active = location.pathname === item.path;
+            const active = item.path === '/student' 
+            ? location.pathname === '/student' || location.pathname.startsWith('/student/') && location.pathname !== '/student/results'
+            : location.pathname === item.path;
             const IconComponent = item.icon;
 
             return (
@@ -129,3 +131,4 @@ export default function Sidebar() {
     </>
   );
 }
+export default Sidebar;
