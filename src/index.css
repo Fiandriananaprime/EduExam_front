@@ -1,0 +1,24 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root {
+  --color-cream: #EDEEC0;
+  --color-ink: #433E0E;
+  --color-sage: #7C9082;
+  --color-taupe: #A7A284;
+  --color-gold: #D0C88E;
+  --color-paper: #F6F6E2;
+  --color-rule: rgba(67, 62, 14, 0.14);
+  --color-danger: #8B2E2E;
+
+  --font-serif: 'Source Serif 4', serif;
+  --font-sans: 'IBM Plex Sans', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background-color: var(--color-cream);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+}
