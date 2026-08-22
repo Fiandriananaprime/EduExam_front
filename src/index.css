@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
 
 :root {
   --color-cream: #EDEEC0;
@@ -15,10 +16,30 @@
   --font-mono: 'IBM Plex Mono', monospace;
 }
 
+@theme {
+  --color-cream: var(--color-cream);
+  --color-ink: var(--color-ink);
+  --color-sage: var(--color-sage);
+  --color-taupe: var(--color-taupe);
+  --color-gold: var(--color-gold);
+  --color-paper: var(--color-paper);
+  --color-rule: var(--color-rule);
+  --color-danger: var(--color-danger);
+
+  --font-serif: var(--font-serif);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+}
+
 body {
   margin: 0;
   font-family: var(--font-sans);
   background-color: var(--color-cream);
   color: var(--color-ink);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+hr {
+  border-color: var(--color-rule);
 }
