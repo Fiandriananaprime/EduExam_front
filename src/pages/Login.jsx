@@ -32,8 +32,7 @@ const Login = () =>  {
 
         showToast(`Welcome ${data.user.firstName}` , 'success')
     } catch (error) {
-        showToast(error.response?.data?.message || 'Une erreur est survenue',
-        'error')
+      showToast(error.message || 'An error occurred', 'error')
     } finally {
         setLoading(false);
     }
