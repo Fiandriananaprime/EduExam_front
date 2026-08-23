@@ -1,4 +1,40 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { loginRequest } from "../api/authApi";
+
 const Login = () =>  {
+    const navigate = useNavigate();
+    const { login } = useAuth();
+
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
+
+    const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    setError("");
+    setLoading(true);
+
+    try {
+        const data = await loginRequest(email, password);
+
+        localStorage.setItem("token", data.token);
+        login(data.user);
+
+        if (data.user.role === "STUDENT") {
+        navigate("/student");
+        } else if (data.user.role === "ADMIN") {
+        navigate("/admin");
+        }
+    } catch (error) {
+        setError(error.message);
+    } finally {
+        setLoading(false);
+    }
+    };
   return (
     <div
       className="min-h-screen flex flex-col bg-cream"
@@ -57,7 +93,7 @@ const Login = () =>  {
               </button>
             </div>
 
-            <form onSubmit={(e) => e.preventDefault()}>
+            <form onSubmit={handleSubmit}>
               <div className="mb-4.5">
                 <label className="block font-mono text-[0.68rem] tracking-widest uppercase text-sage mb-1.5">
                   Identifier
@@ -65,6 +101,8 @@ const Login = () =>  {
                 <input
                   type="email"
                   placeholder="prenom.nom@etablissement.mg"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="w-full border-[1.5px] border-ink rounded-md bg-cream px-3 py-2.5 text-sm text-ink placeholder-taupe focus:outline-none focus:ring-2 focus:ring-sage transition-colors"
                 />
               </div>
@@ -76,6 +114,8 @@ const Login = () =>  {
                 <input
                   type="password"
                   placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   className="w-full border-[1.5px] border-ink rounded-md bg-cream px-3 py-2.5 text-sm text-ink placeholder-taupe focus:outline-none focus:ring-2 focus:ring-sage transition-colors"
                 />
               </div>
@@ -95,9 +135,10 @@ const Login = () =>  {
 
               <button
                 type="submit"
+                disabled={loading}
                 className="w-full bg-ink text-cream rounded-md py-3 font-semibold text-sm hover:bg-ink/80 transition-colors flex items-center justify-center gap-2"
               >
-                Log in
+                {loading ? "Logging in..." : "Log in"}
               </button>
             </form>
 
