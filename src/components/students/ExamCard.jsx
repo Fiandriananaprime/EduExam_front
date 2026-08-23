@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 
-function fmtDate(d) {
+const fmtDate = (d) => {
   if (!d) return '—';
   return new Date(d).toLocaleString('en-US', { 
     day: '2-digit', 
@@ -8,7 +8,7 @@ function fmtDate(d) {
     hour: '2-digit', 
     minute: '2-digit' 
   });
-}
+};
 
 const ExamCard = ({ exam, result, done }) => {
   const navigate = useNavigate();
@@ -67,5 +67,6 @@ const ExamCard = ({ exam, result, done }) => {
       </div>
     </div>
   );
-}
+};
+
 export default ExamCard

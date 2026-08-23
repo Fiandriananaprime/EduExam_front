@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Check } from 'lucide-react';
 import { getMyExam, submitExam } from '../../api/studentApi';
+import { useToast } from '../../context/ToastContext';
 
 const StudentExamPage = () => {
   const { id: examId } = useParams();
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   const [exam, setExam] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -16,22 +18,24 @@ const StudentExamPage = () => {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    async function fetchExamData() {
+    const fetchExamData = async () => {
       try {
         setLoading(true);
         const data = await getMyExam(examId);
         setExam(data);
+        sessionStorage.setItem(`exam-${examId}`, JSON.stringify(data));
       } catch (err) {
         setError(err.message || "Failed to load exam.");
+        showToast(err.message || 'Failed to load exam.', 'error');
       } finally {
         setLoading(false);
       }
-    }
+    };
 
     if (examId) {
       fetchExamData();
     }
-  }, [examId]);
+  }, [examId, showToast]);
 
   if (loading) {
     return (
@@ -50,7 +54,7 @@ const StudentExamPage = () => {
           <div className="font-serif text-4xl text-taupe mb-2">∅</div>
           <div className="font-medium text-ink">{error || "Exam not found or has no questions."}</div>
           <button
-            onClick={() => navigate('/student/dashboard')}
+            onClick={() => navigate('/student')}
             className="mt-4 text-sage text-sm hover:underline"
           >
             Back to dashboard
@@ -84,10 +88,13 @@ const StudentExamPage = () => {
       }));
 
       const result = await submitExam(examId, { answers: formattedAnswers });
+      showToast('Exam submitted successfully.', 'success');
       
-      navigate(`/student/exams/${examId}/result`, { state: { result } });
+      navigate(`/student/exams/${examId}/result`, {
+        state: { result, exam },
+      });
     } catch (err) {
-      alert(err.message || "Failed to submit exam.");
+      showToast(err.message || 'Failed to submit exam.', 'error');
     } finally {
       setSubmitting(false);
     }

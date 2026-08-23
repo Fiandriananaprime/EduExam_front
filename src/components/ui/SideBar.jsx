@@ -10,6 +10,7 @@ import {
   BookOpen 
 } from 'lucide-react';
 import { useAuth } from "../../context/AuthContext";
+import { useToast } from "../../context/ToastContext";
 
 const NAV_CONFIG = {
   STUDENT: [
@@ -26,6 +27,7 @@ const NAV_CONFIG = {
 
  const Sidebar =() => {
   const { user, logout } = useAuth();
+  const { showToast } = useToast();
   const [isOpen, setIsOpen] = useState(false);
   
   const location = useLocation();
@@ -112,7 +114,11 @@ const NAV_CONFIG = {
           )}
 
           <button
-            onClick={logout}
+            onClick={() => {
+              logout();
+              showToast('You have been logged out.', 'success');
+              navigate('/login', { replace: true });
+            }}
             className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-cream/50 hover:text-cream hover:bg-white/5 transition-colors"
           >
             <LogOut className="w-4 h-4 shrink-0" />

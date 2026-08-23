@@ -28,5 +28,5 @@ import { useAuth } from '../context/AuthContext';
       </div>
     </div>
   );
-}
+};
 export default Layout;
