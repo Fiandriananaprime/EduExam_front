@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Check } from 'lucide-react';
-import { getMyExam, submitExam } from '../../api/exams';
+import { getMyExam, submitExam } from '../../api/studentApi';
 
 const StudentExamPage = () => {
-  const { examId } = useParams();
+  const { id: examId } = useParams();
   const navigate = useNavigate();
 
   const [exam, setExam] = useState(null);
