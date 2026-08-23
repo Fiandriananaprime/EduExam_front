@@ -57,7 +57,7 @@ const Login = () =>  {
       </header>
 
       {/* Main */}
-      <main className="flex-1 flex items-center justify-center px-[6vw] py-14">
+      <main className="flex-1 flex items-center justify-center px-[6vw] py-4">
         <div
           className="w-full max-w-[460px] bg-paper border-2 border-ink rounded-xl shadow-2xl relative"
           style={{ padding: "40px 40px 32px" }}
