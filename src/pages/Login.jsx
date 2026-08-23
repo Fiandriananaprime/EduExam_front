@@ -32,8 +32,7 @@ const Login = () =>  {
 
         showToast(`Welcome ${data.user.firstName}` , 'success')
     } catch (error) {
-        showToast(error.response?.data?.message || 'Une erreur est survenue',
-        'error')
+      showToast(error.message || 'An error occurred', 'error')
     } finally {
         setLoading(false);
     }
@@ -79,22 +78,6 @@ const Login = () =>  {
             <p className="text-sm text-ink/70 mb-6">
               Enter your credentials to access your ExamHub workspace.
             </p>
-
-            {/* Role tabs */}
-            <div className="grid grid-cols-2 border-[1.5px] border-ink rounded-lg overflow-hidden mb-6">
-              <button
-                type="button"
-                className="text-center py-2.5 font-mono text-[0.72rem] tracking-widest uppercase bg-sage text-cream"
-              >
-                Student
-              </button>
-              <button
-                type="button"
-                className="text-center py-2.5 font-mono text-[0.72rem] tracking-widest uppercase text-ink border-l-[1.5px] border-ink hover:bg-cream/50"
-              >
-                Administrator
-              </button>
-            </div>
 
             <form onSubmit={handleSubmit}>
               <div className="mb-4.5">

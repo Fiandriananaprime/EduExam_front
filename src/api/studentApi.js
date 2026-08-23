@@ -8,13 +8,25 @@ function getAuthHeaders() {
   };
 }
 
+async function throwApiError(response, fallbackMessage) {
+  let data = {};
+
+  try {
+    data = await response.json();
+  } catch {
+    // Use the fallback when the server response is not JSON.
+  }
+
+  throw new Error(data.message || fallbackMessage);
+}
+
 export async function getMyExams() {
   const response = await fetch(`${API_URL}/my/exams`, {
     headers: getAuthHeaders(),
   });
 
   if (!response.ok) {
-    throw new Error("Failed to fetch exams");
+    await throwApiError(response, "Failed to fetch exams");
   }
 
   return response.json();
@@ -26,7 +38,7 @@ export async function getMyExam(id) {
   });
 
   if (!response.ok) {
-    throw new Error("Failed to fetch exam");
+    await throwApiError(response, "Failed to fetch exam");
   }
 
   return response.json();
@@ -40,7 +52,7 @@ export async function submitExam(id, answers) {
   });
 
   if (!response.ok) {
-    throw new Error("Failed to submit exam");
+    await throwApiError(response, "Failed to submit exam");
   }
 
   return response.json();
@@ -52,7 +64,7 @@ export async function getMyResults() {
   });
 
   if (!response.ok) {
-    throw new Error("Failed to fetch results");
+    await throwApiError(response, "Failed to fetch results");
   }
 
   return response.json();
