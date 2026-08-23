@@ -41,7 +41,6 @@ const StudentExamPage = () => {
     );
   }
 
-  // Conforme OpenAPI: Utilise directement exam.questions sans tri sur .number
   const examQuestions = exam?.questions || [];
 
   if (error || !exam || examQuestions.length === 0) {
