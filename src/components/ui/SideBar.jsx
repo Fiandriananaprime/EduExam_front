@@ -112,7 +112,10 @@ const NAV_CONFIG = {
           )}
 
           <button
-            onClick={logout}
+            onClick={() => {
+              logout();
+              navigate('/login', { replace: true });
+            }}
             className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-cream/50 hover:text-cream hover:bg-white/5 transition-colors"
           >
             <LogOut className="w-4 h-4 shrink-0" />

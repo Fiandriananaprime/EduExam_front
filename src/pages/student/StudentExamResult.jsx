@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { getMyExam, getResultById } from '../../api/studentApi';
+import { getResultById } from '../../api/studentApi';
 
  const StudentResultPage = () => {
-  const { examId } = useParams();
+  const { id :examId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
 
   const [exam, setExam] = useState(null);
-  const [examResult, setExamResult] = useState(location.state?.examResult || null);
+  const [examResult, setExamResult] = useState(
+    location.state?.examResult || location.state?.result || null
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -17,12 +19,20 @@ import { getMyExam, getResultById } from '../../api/studentApi';
       try {
         setLoading(true);
         
-        const fetchedExam = await getMyExam(examId);
-        setExam(fetchedExam);
-
         if (!examResult) {
           const fetchedResult = await getResultById(examId);
           setExamResult(fetchedResult);
+          setExam({
+            title: fetchedResult.examTitle,
+            description: fetchedResult.courseCode,
+            questions: fetchedResult.corrections || [],
+          });
+        } else {
+          setExam({
+            title: examResult.examTitle,
+            description: examResult.courseCode,
+            questions: examResult.corrections || [],
+          });
         }
       } catch (err) {
         setError(err.message || "Failed to load result data");
@@ -107,7 +117,7 @@ import { getMyExam, getResultById } from '../../api/studentApi';
         </h2>
         <div className="space-y-4">
           {exam.questions.map(q => {
-            const correction = examResult.corrections.find(c => c.questionId === q.id) || {};
+            const correction = q;
             
             const selectedId = correction.selectedChoiceId;
             const correctId = correction.correctChoiceId;
@@ -140,34 +150,9 @@ import { getMyExam, getResultById } from '../../api/studentApi';
                 </div>
 
                 <div className="space-y-2 ml-9">
-                  {q.choices.map(c => {
-                    const isSelected = c.id === selectedId;
-                    const isCorrectAns = c.id === correctId;
-                    
-                    let cls = 'border-ink/15 text-taupe';
-                    if (isSelected && isCorrectAns) cls = 'border-sage bg-sage/10 text-sage';
-                    else if (isSelected && !isCorrectAns) cls = 'border-danger/50 bg-danger/8 text-danger';
-                    else if (isCorrectAns && !isSelected) cls = 'border-sage/40 bg-sage/5 text-sage';
-
-                    return (
-                      <div key={c.id} className={`flex items-center gap-3 px-4 py-2.5 rounded-lg border ${cls}`}>
-                        <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${
-                          isSelected ? (isCorrectAns ? 'border-sage bg-sage' : 'border-danger bg-danger') : isCorrectAns ? 'border-sage' : 'border-ink/20'
-                        }`}>
-                          {(isSelected || isCorrectAns) && (
-                            <div className="w-2 h-2 rounded-full bg-cream" />
-                          )}
-                        </div>
-                        <span className="text-sm">{c.text}</span>
-                        {isCorrectAns && (
-                          <span className="ml-auto font-mono text-xs text-sage">Correct answer</span>
-                        )}
-                        {isSelected && !isCorrectAns && (
-                          <span className="ml-auto font-mono text-xs text-danger">Your answer</span>
-                        )}
-                      </div>
-                    );
-                  })}
+                  <div className="font-mono text-xs text-taupe px-4 py-2 border border-rule rounded-lg">
+                    Selected choice: {selectedId ?? 'None'} | Correct choice: {correctId}
+                  </div>
                   {isUnanswered && (
                     <div className="font-mono text-xs text-taupe px-4 py-2 border border-dashed border-taupe/30 rounded-lg">
                       Unanswered question — 0 points awarded
@@ -182,13 +167,13 @@ import { getMyExam, getResultById } from '../../api/studentApi';
 
       <div className="flex gap-3">
         <button
-          onClick={() => navigate('/student-results')}
+          onClick={() => navigate('/student/results')}
           className="px-4 py-2.5 border-2 border-ink text-ink rounded-lg text-sm font-medium hover:bg-ink hover:text-cream transition-colors"
         >
           View all my results
         </button>
         <button
-          onClick={() => navigate('/student-dashboard')}
+          onClick={() => navigate('/student')}
           className="px-4 py-2.5 bg-ink text-cream rounded-lg text-sm font-medium hover:bg-ink/80 transition-colors"
         >
           Back to exams
