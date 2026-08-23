@@ -21,6 +21,7 @@ const StudentExamPage = () => {
         setLoading(true);
         const data = await getMyExam(examId);
         setExam(data);
+        sessionStorage.setItem(`exam-${examId}`, JSON.stringify(data));
       } catch (err) {
         setError(err.message || "Failed to load exam.");
       } finally {
@@ -85,7 +86,9 @@ const StudentExamPage = () => {
 
       const result = await submitExam(examId, { answers: formattedAnswers });
       
-      navigate(`/student/exams/${examId}/result`, { state: { result } });
+      navigate(`/student/exams/${examId}/result`, {
+        state: { result, exam },
+      });
     } catch (err) {
       alert(err.message || "Failed to submit exam.");
     } finally {

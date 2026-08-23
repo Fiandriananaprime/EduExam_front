@@ -2,12 +2,19 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { getResultById } from '../../api/studentApi';
 
- const StudentResultPage = () => {
-  const { id :examId } = useParams();
+const StudentResultPage = () => {
+  const { id: examId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const storedExam = (() => {
+    try {
+      return JSON.parse(sessionStorage.getItem(`exam-${examId}`));
+    } catch {
+      return null;
+    }
+  })();
 
-  const [exam, setExam] = useState(null);
+  const [exam, setExam] = useState(location.state?.exam || storedExam);
   const [examResult, setExamResult] = useState(
     location.state?.examResult || location.state?.result || null
   );
@@ -19,21 +26,21 @@ import { getResultById } from '../../api/studentApi';
       try {
         setLoading(true);
         
-        if (!examResult) {
-          const fetchedResult = await getResultById(examId);
-          setExamResult(fetchedResult);
+        // 1. Récupérer le résultat s'il n'est pas présent
+        let currentResult = examResult;
+        if (!currentResult) {
+          currentResult = await getResultById(examId);
+          setExamResult(currentResult);
+        }
+
+        if (!exam) {
           setExam({
-            title: fetchedResult.examTitle,
-            description: fetchedResult.courseCode,
-            questions: fetchedResult.corrections || [],
-          });
-        } else {
-          setExam({
-            title: examResult.examTitle,
-            description: examResult.courseCode,
-            questions: examResult.corrections || [],
+            title: currentResult.examTitle,
+            description: currentResult.courseCode,
+            questions: currentResult.corrections || [],
           });
         }
+
       } catch (err) {
         setError(err.message || "Failed to load result data");
       } finally {
@@ -44,7 +51,7 @@ import { getResultById } from '../../api/studentApi';
     if (examId) {
       fetchResultData();
     }
-  }, [examId, examResult]);
+  }, [examId]);
 
   if (loading) {
     return <div className="p-8 text-center text-taupe font-mono animate-pulse">Loading results...</div>;
@@ -117,7 +124,9 @@ import { getResultById } from '../../api/studentApi';
         </h2>
         <div className="space-y-4">
           {exam.questions.map(q => {
-            const correction = q;
+            const correction = examResult.corrections.find(
+              item => String(item.questionId) === String(q.id)
+            ) || q;
             
             const selectedId = correction.selectedChoiceId;
             const correctId = correction.correctChoiceId;
@@ -149,12 +158,39 @@ import { getResultById } from '../../api/studentApi';
                   </div>
                 </div>
 
+                {/* Affichage des choix de réponses avec les couleurs demandées */}
                 <div className="space-y-2 ml-9">
-                  <div className="font-mono text-xs text-taupe px-4 py-2 border border-rule rounded-lg">
-                    Selected choice: {selectedId ?? 'None'} | Correct choice: {correctId}
-                  </div>
+                  {(q.choices || q.options || []).map(choice => {
+                    const isTheCorrectChoice = String(choice.id) === String(correctId);
+                    const isTheSelectedChoice = String(choice.id) === String(selectedId);
+                    
+                    let choiceStyles = "border-rule text-taupe bg-paper";
+
+                    if (isTheCorrectChoice) {
+                      // Réponse exacte entourée/colorée en vert
+                      choiceStyles = "border-sage bg-sage/10 text-sage font-medium";
+                    } else if (isTheSelectedChoice && !isCorrect) {
+                      // Réponse choisie en rouge si incorrecte
+                      choiceStyles = "border-danger bg-danger/10 text-danger font-medium";
+                    } else {
+                      // Autres choix neutres
+                      choiceStyles = "border-rule text-taupe/70 bg-paper/50";
+                    }
+
+                    return (
+                      <div 
+                        key={choice.id} 
+                        className={`px-4 py-3 border-2 rounded-lg flex items-center justify-content text-sm ${choiceStyles}`}
+                      >
+                        <span>{choice.text}</span>
+                        {isTheCorrectChoice && <span className="ml-auto font-bold text-sage">✓ Correct</span>}
+                        {isTheSelectedChoice && !isCorrect && <span className="ml-auto font-bold text-danger">✗ Your choice</span>}
+                      </div>
+                    );
+                  })}
+
                   {isUnanswered && (
-                    <div className="font-mono text-xs text-taupe px-4 py-2 border border-dashed border-taupe/30 rounded-lg">
+                    <div className="mt-3 font-mono text-xs text-taupe px-4 py-2 border border-dashed border-taupe/30 rounded-lg">
                       Unanswered question — 0 points awarded
                     </div>
                   )}
@@ -182,4 +218,5 @@ import { getResultById } from '../../api/studentApi';
     </div>
   );
 }
+
 export default StudentResultPage;
