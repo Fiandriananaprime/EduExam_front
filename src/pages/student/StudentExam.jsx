@@ -41,7 +41,8 @@ const StudentExamPage = () => {
     );
   }
 
-  const examQuestions = exam?.questions ? [...exam.questions].sort((a, b) => a.number - b.number) : [];
+  // Conforme OpenAPI: Utilise directement exam.questions sans tri sur .number
+  const examQuestions = exam?.questions || [];
 
   if (error || !exam || examQuestions.length === 0) {
     return (
@@ -77,8 +78,15 @@ const StudentExamPage = () => {
   const handleSubmit = async () => {
     try {
       setSubmitting(true);
-      await submitExam(examId, answers);
-      navigate(`/student/results`);
+
+      const formattedAnswers = Object.entries(answers).map(([questionId, choiceId]) => ({
+        questionId: Number(questionId),
+        choiceId: Number(choiceId)
+      }));
+
+      const result = await submitExam(examId, { answers: formattedAnswers });
+      
+      navigate(`/student/exams/${examId}/result`, { state: { result } });
     } catch (err) {
       alert(err.message || "Failed to submit exam.");
     } finally {
@@ -145,9 +153,9 @@ const StudentExamPage = () => {
           })}
         </aside>
 
-        {/*  Questions List */}
+        {/* Questions List */}
         <main className="flex-1 overflow-y-auto px-6 py-8 max-w-3xl mx-auto w-full space-y-12">
-          {/*  Progress Bar */}
+          {/* Progress Bar */}
           <div className="w-full bg-paper p-4 rounded-xl border border-ink/10">
             <div className="flex justify-between text-xs font-mono text-taupe mb-2">
               <span>Overall Completion</span>
@@ -176,8 +184,9 @@ const StudentExamPage = () => {
                 </span>
               </div>
 
+              {/* Conforme OpenAPI: q.statement à la place de q.text */}
               <h2 className="font-serif text-xl font-semibold text-ink leading-relaxed mb-6">
-                {q.text}
+                {q.statement}
               </h2>
 
               <div className="space-y-3">
