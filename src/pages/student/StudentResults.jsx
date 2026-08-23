@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getMyResults } from '../../api/studentApi';
 
- const StudentResults = () => {
+const StudentResults = () => {
   const [attempts, setAttempts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -12,8 +12,11 @@ import { getMyResults } from '../../api/studentApi';
     async function fetchResults() {
       try {
         setLoading(true);
-        const data = await getMyResults();
-        setAttempts(data);
+        const results = await getMyResults();
+        // /my/results renvoie maintenant directement examTitle et courseCode
+        // (figes au moment de la soumission cote backend) - plus besoin
+        // d'appeler getMyExams ni de resoudre l'examen a part.
+        setAttempts(results || []);
       } catch (err) {
         setError(err.message || 'Failed to load results');
       } finally {
@@ -49,7 +52,7 @@ import { getMyResults } from '../../api/studentApi';
             Your results will appear here after submitting your exams.
           </div>
           <button
-            onClick={() => navigate(`/student/exams/${a.examId}/result`)}
+            onClick={() => navigate('/student')}
             className="mt-4 px-4 py-2 bg-ink text-cream rounded-lg text-sm font-medium hover:bg-ink/80 transition-colors"
           >
             View available exams
@@ -73,18 +76,18 @@ import { getMyResults } from '../../api/studentApi';
               </thead>
               <tbody>
                 {attempts.map((a, i) => {
-                  const percentage = a.totalPoints ? Math.round((a.score / a.totalPoints) * 100) : 0;
+                  const percentage = a.maxScore ? Math.round((a.score / a.maxScore) * 100) : 0;
                   const passed = percentage >= 50;
 
                   return (
-                    <tr key={a.id} className={i > 0 ? 'border-t border-rule' : ''}>
+                    <tr key={`${a.examId}-${a.submittedAt}`} className={i > 0 ? 'border-t border-rule' : ''}>
                       <td className="px-5 py-3">
                         <div className="font-medium text-ink max-w-[200px] truncate">
-                          {a.examTitle || a.exam?.title}
+                          {a.examTitle || `Exam #${a.examId}`}
                         </div>
                       </td>
                       <td className="px-5 py-3 font-mono text-xs text-taupe">
-                        {a.courseName || a.exam?.course?.name}
+                        {a.courseCode || '—'}
                       </td>
                       <td className="px-5 py-3 font-mono text-xs text-taupe">
                         {new Date(a.submittedAt).toLocaleDateString('en-US', {
@@ -94,7 +97,7 @@ import { getMyResults } from '../../api/studentApi';
                         })}
                       </td>
                       <td className="px-5 py-3 font-mono text-sm font-bold text-ink">
-                        {a.score}/{a.totalPoints}
+                        {a.score}/{a.maxScore}
                       </td>
                       <td className="px-5 py-3">
                         <div className="flex items-center gap-2">
@@ -123,7 +126,7 @@ import { getMyResults } from '../../api/studentApi';
                       <td className="px-5 py-3">
                         <button
                           onClick={() =>
-                            onNavigate('student-result', { examId: a.examId })
+                            navigate(`/student/exams/${a.examId}/result`)
                           }
                           className="text-xs font-mono text-sage hover:underline"
                         >
