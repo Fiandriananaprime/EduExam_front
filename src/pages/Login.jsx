@@ -2,20 +2,20 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { loginRequest } from "../api/authApi";
-
+import { useToast } from "../context/ToastContext";
 const Login = () =>  {
+    const {showToast} = useToast();
+
     const navigate = useNavigate();
     const { login } = useAuth();
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
 
     const handleSubmit = async (e) => {
     e.preventDefault();
 
-    setError("");
     setLoading(true);
 
     try {
@@ -29,8 +29,11 @@ const Login = () =>  {
         } else if (data.user.role === "ADMIN") {
         navigate("/admin");
         }
+
+        showToast(`Welcome ${data.user.firstName}` , 'success')
     } catch (error) {
-        setError(error.message);
+        showToast(error.response?.data?.message || 'Une erreur est survenue',
+        'error')
     } finally {
         setLoading(false);
     }

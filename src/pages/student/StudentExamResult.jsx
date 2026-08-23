@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { getResultById } from '../../api/studentApi';
+import { useToast } from '../../context/ToastContext';
 
 const StudentResultPage = () => {
   const { id: examId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const { showToast } = useToast();
   const storedExam = (() => {
     try {
       return JSON.parse(sessionStorage.getItem(`exam-${examId}`));
@@ -43,6 +45,7 @@ const StudentResultPage = () => {
 
       } catch (err) {
         setError(err.message || "Failed to load result data");
+        showToast(err.message || 'Failed to load result data', 'error');
       } finally {
         setLoading(false);
       }

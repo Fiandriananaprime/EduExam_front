@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Check } from 'lucide-react';
 import { getMyExam, submitExam } from '../../api/studentApi';
+import { useToast } from '../../context/ToastContext';
 
 const StudentExamPage = () => {
   const { id: examId } = useParams();
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   const [exam, setExam] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -24,6 +26,7 @@ const StudentExamPage = () => {
         sessionStorage.setItem(`exam-${examId}`, JSON.stringify(data));
       } catch (err) {
         setError(err.message || "Failed to load exam.");
+        showToast(err.message || 'Failed to load exam.', 'error');
       } finally {
         setLoading(false);
       }
@@ -85,12 +88,13 @@ const StudentExamPage = () => {
       }));
 
       const result = await submitExam(examId, { answers: formattedAnswers });
+      showToast('Exam submitted successfully.', 'success');
       
       navigate(`/student/exams/${examId}/result`, {
         state: { result, exam },
       });
     } catch (err) {
-      alert(err.message || "Failed to submit exam.");
+      showToast(err.message || 'Failed to submit exam.', 'error');
     } finally {
       setSubmitting(false);
     }

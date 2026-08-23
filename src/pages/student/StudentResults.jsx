@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getMyResults } from '../../api/studentApi';
+import { useToast } from '../../context/ToastContext';
 
 const StudentResults = () => {
   const [attempts, setAttempts] = useState([]);
@@ -8,6 +9,7 @@ const StudentResults = () => {
   const [error, setError] = useState(null);
 
   const navigate = useNavigate();
+  const { showToast } = useToast();
   useEffect(() => {
     async function fetchResults() {
       try {
@@ -19,6 +21,7 @@ const StudentResults = () => {
         setAttempts(results || []);
       } catch (err) {
         setError(err.message || 'Failed to load results');
+        showToast(err.message || 'Failed to load results', 'error');
       } finally {
         setLoading(false);
       }
