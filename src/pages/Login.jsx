@@ -79,22 +79,6 @@ const Login = () =>  {
               Enter your credentials to access your ExamHub workspace.
             </p>
 
-            {/* Role tabs */}
-            <div className="grid grid-cols-2 border-[1.5px] border-ink rounded-lg overflow-hidden mb-6">
-              <button
-                type="button"
-                className="text-center py-2.5 font-mono text-[0.72rem] tracking-widest uppercase bg-sage text-cream"
-              >
-                Student
-              </button>
-              <button
-                type="button"
-                className="text-center py-2.5 font-mono text-[0.72rem] tracking-widest uppercase text-ink border-l-[1.5px] border-ink hover:bg-cream/50"
-              >
-                Administrator
-              </button>
-            </div>
-
             <form onSubmit={handleSubmit}>
               <div className="mb-4.5">
                 <label className="block font-mono text-[0.68rem] tracking-widest uppercase text-sage mb-1.5">
