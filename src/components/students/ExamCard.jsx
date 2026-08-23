@@ -27,7 +27,7 @@ const ExamCard = ({ exam, result, done }) => {
 
         {done ? (
           <span className="font-mono text-xs px-2 py-1 rounded bg-sage/15 text-sage shrink-0">
-            {result?.score !== undefined ? `${result.score} / ${result.maxScore}` : 'Completed'}
+            {result?.score !== undefined ? `${result.score} / ${result.totalPoints}` : 'Completed'}
           </span>
         ) : (
           <span className="font-mono text-xs px-2 py-1 rounded shrink-0 bg-sage/20 text-sage">
