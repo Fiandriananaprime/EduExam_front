@@ -57,3 +57,14 @@ export async function getMyResults() {
 
   return response.json();
 }
+
+export async function getResultById(examId) {
+  const results = await getMyResults();
+  const result = results.find((r) => String(r.examId) === String(examId));
+
+  if (!result) {
+    throw new Error("Result not found");
+  }
+
+  return result;
+}
