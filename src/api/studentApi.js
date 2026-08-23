@@ -1,7 +1,17 @@
 const API_URL = import.meta.env.VITE_API_URL;
 
+function getAuthHeaders() {
+  const token = localStorage.getItem("token");
+  return {
+    "Content-Type": "application/json",
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
+}
+
 export async function getMyExams() {
-  const response = await fetch(`${API_URL}/my/exams`);
+  const response = await fetch(`${API_URL}/my/exams`, {
+    headers: getAuthHeaders(),
+  });
 
   if (!response.ok) {
     throw new Error("Failed to fetch exams");
@@ -11,7 +21,9 @@ export async function getMyExams() {
 }
 
 export async function getMyExam(id) {
-  const response = await fetch(`${API_URL}/my/exams/${id}`);
+  const response = await fetch(`${API_URL}/my/exams/${id}`, {
+    headers: getAuthHeaders(),
+  });
 
   if (!response.ok) {
     throw new Error("Failed to fetch exam");
@@ -23,9 +35,7 @@ export async function getMyExam(id) {
 export async function submitExam(id, answers) {
   const response = await fetch(`${API_URL}/my/exams/${id}/submit`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: getAuthHeaders(),
     body: JSON.stringify(answers),
   });
 
@@ -37,7 +47,9 @@ export async function submitExam(id, answers) {
 }
 
 export async function getMyResults() {
-  const response = await fetch(`${API_URL}/my/results`);
+  const response = await fetch(`${API_URL}/my/results`, {
+    headers: getAuthHeaders(),
+  });
 
   if (!response.ok) {
     throw new Error("Failed to fetch results");
