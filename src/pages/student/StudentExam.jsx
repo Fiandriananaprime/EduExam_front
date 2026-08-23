@@ -18,7 +18,7 @@ const StudentExamPage = () => {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    async function fetchExamData() {
+    const fetchExamData = async () => {
       try {
         setLoading(true);
         const data = await getMyExam(examId);
@@ -30,12 +30,12 @@ const StudentExamPage = () => {
       } finally {
         setLoading(false);
       }
-    }
+    };
 
     if (examId) {
       fetchExamData();
     }
-  }, [examId]);
+  }, [examId, showToast]);
 
   if (loading) {
     return (
@@ -54,7 +54,7 @@ const StudentExamPage = () => {
           <div className="font-serif text-4xl text-taupe mb-2">∅</div>
           <div className="font-medium text-ink">{error || "Exam not found or has no questions."}</div>
           <button
-            onClick={() => navigate('/student/dashboard')}
+            onClick={() => navigate('/student')}
             className="mt-4 text-sage text-sm hover:underline"
           >
             Back to dashboard

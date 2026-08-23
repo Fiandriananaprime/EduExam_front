@@ -24,7 +24,7 @@ const StudentResultPage = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    async function fetchResultData() {
+    const fetchResultData = async () => {
       try {
         setLoading(true);
         
@@ -49,12 +49,12 @@ const StudentResultPage = () => {
       } finally {
         setLoading(false);
       }
-    }
+    };
 
     if (examId) {
       fetchResultData();
     }
-  }, [examId]);
+  }, [examId, showToast]);
 
   if (loading) {
     return <div className="p-8 text-center text-taupe font-mono animate-pulse">Loading results...</div>;
@@ -69,7 +69,7 @@ const StudentResultPage = () => {
       <div className="p-8 text-center">
         <div className="font-serif text-4xl text-taupe mb-2">∅</div>
         <div className="text-ink font-medium">Result not found.</div>
-        <button onClick={() => navigate('/student-dashboard')} className="mt-4 text-sage text-sm hover:underline">
+        <button onClick={() => navigate('/student')} className="mt-4 text-sage text-sm hover:underline">
           Back to dashboard
         </button>
       </div>
@@ -84,7 +84,7 @@ const StudentResultPage = () => {
   return (
     <div className="p-6 lg:p-8 max-w-3xl mx-auto space-y-8">
       <div>
-        <button onClick={() => navigate('/student-dashboard')} className="flex items-center gap-1 text-sage text-sm mb-4 hover:underline font-mono">
+        <button onClick={() => navigate('/student')} className="flex items-center gap-1 text-sage text-sm mb-4 hover:underline font-mono">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
             <path d="M9 3L5 7l4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
@@ -183,7 +183,7 @@ const StudentResultPage = () => {
                     return (
                       <div 
                         key={choice.id} 
-                        className={`px-4 py-3 border-2 rounded-lg flex items-center justify-content text-sm ${choiceStyles}`}
+                        className={`px-4 py-3 border-2 rounded-lg flex items-center justify-between text-sm ${choiceStyles}`}
                       >
                         <span>{choice.text}</span>
                         {isTheCorrectChoice && <span className="ml-auto font-bold text-sage">✓ Correct</span>}

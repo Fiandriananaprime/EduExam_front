@@ -15,7 +15,7 @@ import ExamCard from '../../components/students/ExamCard';
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    async function fetchData() {
+    const fetchData = async () => {
       try {
         setLoading(true);
         setError(null);
@@ -28,6 +28,7 @@ import ExamCard from '../../components/students/ExamCard';
         setAvailableExams(examsData || []);
 
         const sortedResults = (resultsData || [])
+          .slice()
           .sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt))
           .slice(0, 2);
 
@@ -38,10 +39,10 @@ import ExamCard from '../../components/students/ExamCard';
       } finally {
         setLoading(false);
       }
-    }
+    };
 
     fetchData();
-  }, []);
+  }, [showToast]);
 
   if (loading) {
     return (

@@ -1,16 +1,16 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useCallback, useContext, useState } from 'react';
 import { ToastContainer } from '../components/ui/Toast';
 
 const ToastContext = createContext(null);
 
-export function ToastProvider({ children }) {
+export const ToastProvider = ({ children }) => {
   const [toasts, setToasts] = useState([]);
 
-  const removeToast = (id) => {
+  const removeToast = useCallback((id) => {
     setToasts((prev) => prev.filter((toast) => toast.id !== id));
-  };
+  }, []);
 
-  const showToast = (message, type = 'info') => {
+  const showToast = useCallback((message, type = 'info') => {
     const id = crypto.randomUUID();
 
     setToasts((prev) => [
@@ -25,7 +25,7 @@ export function ToastProvider({ children }) {
     setTimeout(() => {
       removeToast(id);
     }, 4000);
-  };
+  }, [removeToast]);
 
   return (
     <ToastContext.Provider value={{ showToast, removeToast }}>
@@ -37,10 +37,10 @@ export function ToastProvider({ children }) {
       />
     </ToastContext.Provider>
   );
-}
+};
 
-export function useToast() {
+export const useToast = () => {
   const context = useContext(ToastContext);
 
   return context;
-}
+};
