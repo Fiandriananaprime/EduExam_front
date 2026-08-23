@@ -18,16 +18,18 @@ const ExamCard = ({ exam, result, done }) => {
       <div className="flex items-start justify-between gap-2">
         <div className="flex-1 min-w-0">
           <div className="font-serif font-semibold text-ink text-base leading-tight">
-            {exam?.title || `Exam #${result?.examId}`}
+            {exam?.title || result?.examTitle || `Exam #${result?.examId}`}
           </div>
-          {exam?.description && (
-            <div className="text-xs text-taupe mt-1 truncate">{exam.description}</div>
+          {(exam?.description || result?.courseCode) && (
+            <div className="text-xs text-taupe mt-1 truncate">
+              {exam?.description || result.courseCode}
+            </div>
           )}
         </div>
 
         {done ? (
           <span className="font-mono text-xs px-2 py-1 rounded bg-sage/15 text-sage shrink-0">
-            {result?.score !== undefined ? `${result.score} / ${result.totalPoints}` : 'Completed'}
+            {result?.score !== undefined ? `${result.score} / ${result.maxScore}` : 'Completed'}
           </span>
         ) : (
           <span className="font-mono text-xs px-2 py-1 rounded shrink-0 bg-sage/20 text-sage">
