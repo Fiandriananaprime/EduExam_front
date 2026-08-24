@@ -8,12 +8,26 @@ const getAuthHeaders = () => {
   };
 }
 
+const redirectToLogin = () => {
+  localStorage.removeItem("token");
+  localStorage.removeItem("role");
+  localStorage.removeItem("user");
+
+  if (typeof window !== "undefined" && window.location.pathname !== "/login") {
+    window.location.replace("/login");
+  }
+};
+
 const throwApiError = async (response, fallbackMessage) => {
   let data = {};
 
   try {
     data = await response.json();
   } catch {
+  }
+
+  if (response.status === 401) {
+    redirectToLogin();
   }
 
   throw new Error(data.message || fallbackMessage);

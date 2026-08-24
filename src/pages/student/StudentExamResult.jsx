@@ -77,9 +77,10 @@ const StudentResultPage = () => {
   }
 
   const pct = Math.round((examResult.score / examResult.maxScore) * 100);
-  const correctCount = examResult.corrections.filter(c => c.isCorrect).length;
-  const incorrectCount = examResult.corrections.filter(c => !c.isCorrect && c.selectedChoiceId !== null).length;
-  const unansweredCount = examResult.corrections.filter(c => c.selectedChoiceId === null).length;
+  const corrections = examResult.corrections || [];
+  const correctCount = corrections.filter(c => c.isCorrect).length;
+  const incorrectCount = corrections.filter(c => !c.isCorrect && c.selectedChoiceId !== null).length;
+  const unansweredCount = corrections.filter(c => c.selectedChoiceId === null).length;
 
   return (
     <div className="p-6 lg:p-8 max-w-3xl mx-auto space-y-8">
@@ -126,8 +127,8 @@ const StudentResultPage = () => {
           Detailed Correction
         </h2>
         <div className="space-y-4">
-          {exam.questions.map(q => {
-            const correction = examResult.corrections.find(
+          {(exam.questions || []).map(q => {
+            const correction = corrections.find(
               item => String(item.questionId) === String(q.id)
             ) || q;
             
@@ -163,7 +164,7 @@ const StudentResultPage = () => {
 
                 {/* Affichage des choix de réponses avec les couleurs demandées */}
                 <div className="space-y-2 ml-9">
-                  {(q.choices || q.options || []).map(choice => {
+                  {(q.choices || q.options || correction.choices || []).map(choice => {
                     const isTheCorrectChoice = String(choice.id) === String(correctId);
                     const isTheSelectedChoice = String(choice.id) === String(selectedId);
                     

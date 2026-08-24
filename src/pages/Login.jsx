@@ -49,7 +49,7 @@ const Login = () =>  {
       {/* Header */}
       <header className="border-b-2 border-ink px-[6vw] py-[18px] flex items-center justify-between">
         <span className="font-serif text-2xl font-bold text-ink tracking-tight">
-          Exam<span className="text-sage">Hub</span>
+          Edu<span className="text-sage">Exam</span>
         </span>
         <span className="font-mono text-xs text-sage tracking-widest uppercase">
           Exam Platform
