@@ -49,7 +49,7 @@ const Login = () =>  {
       {/* Header */}
       <header className="border-b-2 border-ink px-[6vw] py-[18px] flex items-center justify-between">
         <span className="font-serif text-2xl font-bold text-ink tracking-tight">
-          Exam<span className="text-sage">Hub</span>
+          Edu<span className="text-sage">Exam</span>
         </span>
         <span className="font-mono text-xs text-sage tracking-widest uppercase">
           Exam Platform
@@ -57,7 +57,7 @@ const Login = () =>  {
       </header>
 
       {/* Main */}
-      <main className="flex-1 flex items-center justify-center px-[6vw] py-14">
+      <main className="flex-1 flex items-center justify-center px-[6vw] py-4">
         <div
           className="w-full max-w-[460px] bg-paper border-2 border-ink rounded-xl shadow-2xl relative"
           style={{ padding: "40px 40px 32px" }}
@@ -78,22 +78,6 @@ const Login = () =>  {
             <p className="text-sm text-ink/70 mb-6">
               Enter your credentials to access your ExamHub workspace.
             </p>
-
-            {/* Role tabs */}
-            <div className="grid grid-cols-2 border-[1.5px] border-ink rounded-lg overflow-hidden mb-6">
-              <button
-                type="button"
-                className="text-center py-2.5 font-mono text-[0.72rem] tracking-widest uppercase bg-sage text-cream"
-              >
-                Student
-              </button>
-              <button
-                type="button"
-                className="text-center py-2.5 font-mono text-[0.72rem] tracking-widest uppercase text-ink border-l-[1.5px] border-ink hover:bg-cream/50"
-              >
-                Administrator
-              </button>
-            </div>
 
             <form onSubmit={handleSubmit}>
               <div className="mb-4.5">

@@ -24,7 +24,7 @@ const StudentResultPage = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    async function fetchResultData() {
+    const fetchResultData = async () => {
       try {
         setLoading(true);
         
@@ -49,12 +49,12 @@ const StudentResultPage = () => {
       } finally {
         setLoading(false);
       }
-    }
+    };
 
     if (examId) {
       fetchResultData();
     }
-  }, [examId]);
+  }, [examId, showToast]);
 
   if (loading) {
     return <div className="p-8 text-center text-taupe font-mono animate-pulse">Loading results...</div>;
@@ -69,7 +69,7 @@ const StudentResultPage = () => {
       <div className="p-8 text-center">
         <div className="font-serif text-4xl text-taupe mb-2">∅</div>
         <div className="text-ink font-medium">Result not found.</div>
-        <button onClick={() => navigate('/student-dashboard')} className="mt-4 text-sage text-sm hover:underline">
+        <button onClick={() => navigate('/student')} className="mt-4 text-sage text-sm hover:underline">
           Back to dashboard
         </button>
       </div>
@@ -77,14 +77,15 @@ const StudentResultPage = () => {
   }
 
   const pct = Math.round((examResult.score / examResult.maxScore) * 100);
-  const correctCount = examResult.corrections.filter(c => c.isCorrect).length;
-  const incorrectCount = examResult.corrections.filter(c => !c.isCorrect && c.selectedChoiceId !== null).length;
-  const unansweredCount = examResult.corrections.filter(c => c.selectedChoiceId === null).length;
+  const corrections = examResult.corrections || [];
+  const correctCount = corrections.filter(c => c.isCorrect).length;
+  const incorrectCount = corrections.filter(c => !c.isCorrect && c.selectedChoiceId !== null).length;
+  const unansweredCount = corrections.filter(c => c.selectedChoiceId === null).length;
 
   return (
     <div className="p-6 lg:p-8 max-w-3xl mx-auto space-y-8">
       <div>
-        <button onClick={() => navigate('/student-dashboard')} className="flex items-center gap-1 text-sage text-sm mb-4 hover:underline font-mono">
+        <button onClick={() => navigate('/student')} className="flex items-center gap-1 text-sage text-sm mb-4 hover:underline font-mono">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
             <path d="M9 3L5 7l4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
@@ -126,8 +127,8 @@ const StudentResultPage = () => {
           Detailed Correction
         </h2>
         <div className="space-y-4">
-          {exam.questions.map(q => {
-            const correction = examResult.corrections.find(
+          {(exam.questions || []).map(q => {
+            const correction = corrections.find(
               item => String(item.questionId) === String(q.id)
             ) || q;
             
@@ -163,7 +164,7 @@ const StudentResultPage = () => {
 
                 {/* Affichage des choix de réponses avec les couleurs demandées */}
                 <div className="space-y-2 ml-9">
-                  {(q.choices || q.options || []).map(choice => {
+                  {(q.choices || q.options || correction.choices || []).map(choice => {
                     const isTheCorrectChoice = String(choice.id) === String(correctId);
                     const isTheSelectedChoice = String(choice.id) === String(selectedId);
                     
@@ -183,7 +184,7 @@ const StudentResultPage = () => {
                     return (
                       <div 
                         key={choice.id} 
-                        className={`px-4 py-3 border-2 rounded-lg flex items-center justify-content text-sm ${choiceStyles}`}
+                        className={`px-4 py-3 border-2 rounded-lg flex items-center justify-between text-sm ${choiceStyles}`}
                       >
                         <span>{choice.text}</span>
                         {isTheCorrectChoice && <span className="ml-auto font-bold text-sage">✓ Correct</span>}

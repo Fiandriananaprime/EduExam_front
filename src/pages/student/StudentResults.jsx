@@ -11,7 +11,7 @@ const StudentResults = () => {
   const navigate = useNavigate();
   const { showToast } = useToast();
   useEffect(() => {
-    async function fetchResults() {
+    const fetchResults = async () => {
       try {
         setLoading(true);
         const results = await getMyResults();
@@ -25,10 +25,10 @@ const StudentResults = () => {
       } finally {
         setLoading(false);
       }
-    }
+    };
 
     fetchResults();
-  }, []);
+  }, [showToast]);
 
   if (loading) {
     return (

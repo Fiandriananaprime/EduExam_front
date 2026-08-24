@@ -8,7 +8,7 @@ const AuthContext = createContext(null);
 
     if (!storedUser) {
       return null;
-    }
+    };
 
     try {
       return JSON.parse(storedUser);
@@ -36,9 +36,9 @@ const AuthContext = createContext(null);
       {children}
     </AuthContext.Provider>
   );
-}
+};
 
 const useAuth = () => {
   return useContext(AuthContext);
-}
+};
 export {AuthProvider , useAuth}

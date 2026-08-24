@@ -15,10 +15,37 @@ const StudentExamPage = () => {
 
   const [answers, setAnswers] = useState({});
   const [showSubmitModal, setShowSubmitModal] = useState(false);
+  const [showLeaveDialog, setShowLeaveDialog] = useState(false);
+  const [isLeaving, setIsLeaving] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    async function fetchExamData() {
+    const examUrl = window.location.href;
+    window.history.pushState(null, '', examUrl);
+
+    const handlePopState = () => {
+      if (!isLeaving) {
+        window.history.pushState(null, '', examUrl);
+        setShowLeaveDialog(true);
+      }
+    };
+
+    const handleBeforeUnload = (event) => {
+      event.preventDefault();
+      event.returnValue = '';
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [isLeaving]);
+
+  useEffect(() => {
+    const fetchExamData = async () => {
       try {
         setLoading(true);
         const data = await getMyExam(examId);
@@ -30,12 +57,12 @@ const StudentExamPage = () => {
       } finally {
         setLoading(false);
       }
-    }
+    };
 
     if (examId) {
       fetchExamData();
     }
-  }, [examId]);
+  }, [examId, showToast]);
 
   if (loading) {
     return (
@@ -54,7 +81,7 @@ const StudentExamPage = () => {
           <div className="font-serif text-4xl text-taupe mb-2">∅</div>
           <div className="font-medium text-ink">{error || "Exam not found or has no questions."}</div>
           <button
-            onClick={() => navigate('/student/dashboard')}
+            onClick={() => navigate('/student')}
             className="mt-4 text-sage text-sm hover:underline"
           >
             Back to dashboard
@@ -83,8 +110,8 @@ const StudentExamPage = () => {
       setSubmitting(true);
 
       const formattedAnswers = Object.entries(answers).map(([questionId, choiceId]) => ({
-        questionId: Number(questionId),
-        choiceId: Number(choiceId)
+        questionId,
+        choiceId: String(choiceId)
       }));
 
       const result = await submitExam(examId, { answers: formattedAnswers });
@@ -93,10 +120,23 @@ const StudentExamPage = () => {
       navigate(`/student/exams/${examId}/result`, {
         state: { result, exam },
       });
+      return true;
     } catch (err) {
       showToast(err.message || 'Failed to submit exam.', 'error');
+      return false;
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleLeaveExam = async () => {
+    setIsLeaving(true);
+    setShowLeaveDialog(false);
+    const submitted = await handleSubmit();
+
+    if (!submitted) {
+      setIsLeaving(false);
+      setShowLeaveDialog(true);
     }
   };
 
@@ -190,8 +230,6 @@ const StudentExamPage = () => {
                     {q.points} point{q.points > 1 ? 's' : ''}
                     </span>
                 </div>
-
-                {/* Conforme OpenAPI: q.statement à la place de q.text */}
                 <h2 className="font-serif text-xl font-semibold text-ink leading-relaxed mb-6">
                     {q.statement}
                 </h2>
@@ -236,6 +274,36 @@ const StudentExamPage = () => {
             </div>
         </main>
       </div>
+
+      {/* Leave confirmation dialog */}
+      {showLeaveDialog && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-ink/20 backdrop-blur-[1px]" />
+          <div className="relative z-10 w-full max-w-md bg-paper border-2 border-ink rounded-xl shadow-2xl p-6">
+            <h2 className="font-serif text-xl font-semibold text-ink mb-3">
+              Quitter l&apos;examen ?
+            </h2>
+            <p className="text-sm text-ink/80 leading-relaxed mb-6">
+              Il sera soumis avec vos réponses actuelles.
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => setShowLeaveDialog(false)}
+                className="px-4 py-2 border border-ink/30 rounded-lg text-sm text-ink hover:bg-ink/5"
+              >
+                Continuer l&apos;examen
+              </button>
+              <button
+                onClick={handleLeaveExam}
+                disabled={submitting}
+                className="px-4 py-2 bg-ink text-cream rounded-lg text-sm font-medium hover:bg-ink/80 transition-colors disabled:opacity-50"
+              >
+                {submitting ? 'Soumission...' : "Quitter l'examen"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Submit confirmation modal */}
       {showSubmitModal && (
