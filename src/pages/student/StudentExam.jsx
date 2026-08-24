@@ -83,8 +83,8 @@ const StudentExamPage = () => {
       setSubmitting(true);
 
       const formattedAnswers = Object.entries(answers).map(([questionId, choiceId]) => ({
-        questionId: Number(questionId),
-        choiceId: Number(choiceId)
+        questionId,
+        choiceId: String(choiceId)
       }));
 
       const result = await submitExam(examId, { answers: formattedAnswers });

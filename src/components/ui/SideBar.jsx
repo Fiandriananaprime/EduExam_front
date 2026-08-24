@@ -59,7 +59,7 @@ const NAV_CONFIG = {
         {/* Sidebar Header */}
         <div className="px-5 py-5 border-b border-white/10">
           <div className="font-serif text-xl font-bold text-cream tracking-tight">
-            Exam<span className="text-gold">Hub</span>
+            Edu<span className="text-gold">Exam</span>
           </div>
           <div className="font-mono text-xs text-taupe mt-0.5 tracking-widest uppercase">
             {user?.role}
