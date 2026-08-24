@@ -27,8 +27,6 @@ const StudentResultPage = () => {
     const fetchResultData = async () => {
       try {
         setLoading(true);
-        
-        // 1. Récupérer le résultat s'il n'est pas présent
         let currentResult = examResult;
         if (!currentResult) {
           currentResult = await getResultById(examId);
@@ -76,10 +74,11 @@ const StudentResultPage = () => {
     );
   }
 
-  const pct = Math.round((examResult.score / examResult.maxScore) * 100);
-  const correctCount = examResult.corrections.filter(c => c.isCorrect).length;
-  const incorrectCount = examResult.corrections.filter(c => !c.isCorrect && c.selectedChoiceId !== null).length;
-  const unansweredCount = examResult.corrections.filter(c => c.selectedChoiceId === null).length;
+  const corrections = examResult.corrections || [];
+  const pct = examResult.maxScore ? Math.round((examResult.score / examResult.maxScore) * 100) : 0;
+  const correctCount = corrections.filter(c => c.isCorrect).length;
+  const incorrectCount = corrections.filter(c => !c.isCorrect && c.selectedChoiceId !== null).length;
+  const unansweredCount = corrections.filter(c => c.selectedChoiceId === null).length;
 
   return (
     <div className="p-6 lg:p-8 max-w-3xl mx-auto space-y-8">
@@ -126,10 +125,11 @@ const StudentResultPage = () => {
           Detailed Correction
         </h2>
         <div className="space-y-4">
-          {exam.questions.map(q => {
-            const correction = examResult.corrections.find(
+          {(exam.questions || []).map(q => {
+            const correction = corrections.find(
               item => String(item.questionId) === String(q.id)
             ) || q;
+            const choices = correction.choices || q.choices || [];
             
             const selectedId = correction.selectedChoiceId;
             const correctId = correction.correctChoiceId;
@@ -163,20 +163,17 @@ const StudentResultPage = () => {
 
                 {/* Affichage des choix de réponses avec les couleurs demandées */}
                 <div className="space-y-2 ml-9">
-                  {(q.choices || q.options || []).map(choice => {
+                  {choices.map(choice => {
                     const isTheCorrectChoice = String(choice.id) === String(correctId);
                     const isTheSelectedChoice = String(choice.id) === String(selectedId);
                     
                     let choiceStyles = "border-rule text-taupe bg-paper";
 
                     if (isTheCorrectChoice) {
-                      // Réponse exacte entourée/colorée en vert
                       choiceStyles = "border-sage bg-sage/10 text-sage font-medium";
                     } else if (isTheSelectedChoice && !isCorrect) {
-                      // Réponse choisie en rouge si incorrecte
                       choiceStyles = "border-danger bg-danger/10 text-danger font-medium";
                     } else {
-                      // Autres choix neutres
                       choiceStyles = "border-rule text-taupe/70 bg-paper/50";
                     }
 
