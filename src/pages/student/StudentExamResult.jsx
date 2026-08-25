@@ -27,8 +27,6 @@ const StudentResultPage = () => {
     const fetchResultData = async () => {
       try {
         setLoading(true);
-        
-        // 1. Récupérer le résultat s'il n'est pas présent
         let currentResult = examResult;
         if (!currentResult) {
           currentResult = await getResultById(examId);
@@ -39,7 +37,7 @@ const StudentResultPage = () => {
           setExam({
             title: currentResult.examTitle,
             description: currentResult.courseCode,
-            questions: currentResult.corrections || [],
+            questions: [],
           });
         }
 
@@ -79,8 +77,13 @@ const StudentResultPage = () => {
   const pct = Math.round((examResult.score / examResult.maxScore) * 100);
   const corrections = examResult.corrections || [];
   const correctCount = corrections.filter(c => c.isCorrect).length;
-  const incorrectCount = corrections.filter(c => !c.isCorrect && c.selectedChoiceId !== null).length;
-  const unansweredCount = corrections.filter(c => c.selectedChoiceId === null).length;
+  const incorrectCount = corrections.filter(
+    c => !c.isCorrect && c.selectedChoiceId != null
+  ).length;
+  const unansweredCount = corrections.filter(
+    c => c.selectedChoiceId == null
+  ).length;
+  const examQuestions = exam.questions || [];
 
   return (
     <div className="p-6 lg:p-8 max-w-3xl mx-auto space-y-8">
@@ -127,15 +130,22 @@ const StudentResultPage = () => {
           Detailed Correction
         </h2>
         <div className="space-y-4">
-          {(exam.questions || []).map(q => {
-            const correction = corrections.find(
-              item => String(item.questionId) === String(q.id)
-            ) || q;
-            
+          {corrections.map(correction => {
+            const question = examQuestions.find(
+              item => String(item.id) === String(correction.questionId)
+            );
+            const statement = correction.statement || question?.statement || 'Question';
+            const choices = question?.choices || correction.choices || [];
             const selectedId = correction.selectedChoiceId;
             const correctId = correction.correctChoiceId;
+            const selectedChoice = choices.find(
+              choice => String(choice.id) === String(selectedId)
+            );
+            const correctChoice = choices.find(
+              choice => String(choice.id) === String(correctId)
+            );
             const isCorrect = correction.isCorrect;
-            const isUnanswered = selectedId === null || selectedId === undefined;
+            const isUnanswered = selectedId == null;
 
             let cardCls = 'border-ink/20';
             if (isCorrect) cardCls = 'border-sage/40 bg-sage/5';
@@ -143,7 +153,7 @@ const StudentResultPage = () => {
             else cardCls = 'border-danger/30 bg-danger/5';
 
             return (
-              <div key={q.id} className={`bg-paper border-2 rounded-xl p-5 ${cardCls}`}>
+              <div key={correction.questionId} className={`bg-paper border-2 rounded-xl p-5 ${cardCls}`}>
                 <div className="flex items-start gap-3 mb-4">
                   <div className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
                     isCorrect ? 'bg-sage text-cream' : isUnanswered ? 'bg-gold text-ink' : 'bg-danger/80 text-cream'
@@ -152,32 +162,30 @@ const StudentResultPage = () => {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-2">
-                      <p className="font-serif font-semibold text-ink text-sm leading-relaxed">{q.statement}</p>
+                      <p className="font-serif font-semibold text-ink text-sm leading-relaxed">{statement}</p>
                       <span className={`font-mono text-xs px-2 py-1 rounded shrink-0 ${
                         isCorrect ? 'bg-sage/20 text-sage' : 'bg-ink/10 text-taupe'
                       }`}>
-                        {correction.pointsEarned !== undefined ? `+${correction.pointsEarned}` : '0'} pt{q.points > 1 ? 's' : ''}
+                        {correction.pointsEarned !== undefined ? `+${correction.pointsEarned}` : '0'} pt{question?.points > 1 ? 's' : ''}
                       </span>
                     </div>
                   </div>
                 </div>
 
-                {/* Affichage des choix de réponses avec les couleurs demandées */}
+                {/*Response*/}
                 <div className="space-y-2 ml-9">
-                  {(q.choices || q.options || correction.choices || []).map(choice => {
+                  {choices.map(choice => {
                     const isTheCorrectChoice = String(choice.id) === String(correctId);
                     const isTheSelectedChoice = String(choice.id) === String(selectedId);
                     
                     let choiceStyles = "border-rule text-taupe bg-paper";
 
                     if (isTheCorrectChoice) {
-                      // Réponse exacte entourée/colorée en vert
                       choiceStyles = "border-sage bg-sage/10 text-sage font-medium";
                     } else if (isTheSelectedChoice && !isCorrect) {
-                      // Réponse choisie en rouge si incorrecte
                       choiceStyles = "border-danger bg-danger/10 text-danger font-medium";
                     } else {
-                      // Autres choix neutres
+                      
                       choiceStyles = "border-rule text-taupe/70 bg-paper/50";
                     }
 
