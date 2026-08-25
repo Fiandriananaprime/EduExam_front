@@ -1,4 +1,13 @@
+import { Modal } from "../../components/students/addStudentModal";
+import { StudentForm } from "../../components/students/StudentForm";
+import { useState } from "react";
 const AdminStudent = () => {
+  const [modal, setModal] = useState(null);
+  const handleAdd = ()=> {
+    console.log("Student should be created");
+    setModal(null);
+  }
+
   return (
     <>
       <section>
@@ -11,7 +20,7 @@ const AdminStudent = () => {
               X Comptes enregistrés
             </p>
           </div>
-          <button className="flex items-center gap-2 px-4 py-2.5 bg-ink text-cream rounded-lg text-sm font-medium hover:bg-ink/80 transition-colors">
+          <button className="flex items-center gap-2 px-4 py-2.5 bg-ink text-cream rounded-lg text-sm font-medium hover:bg-ink/80 transition-colors" onClick={() => setModal("add-student")}>
             Add new student
           </button>
         </div>
@@ -58,6 +67,47 @@ const AdminStudent = () => {
           </div>
         </div>
       </section>
+      <div class="bg-paper border-2 border-ink/20 rounded-xl overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-rule bg-cream/50">
+                <th class="text-left px-5 py-3 font-mono text-xs uppercase tracking-wider text-taupe">
+                  Nom
+                </th>
+                <th class="text-left px-5 py-3 font-mono text-xs uppercase tracking-wider text-taupe">
+                  Email
+                </th>
+                <th class="text-left px-5 py-3 font-mono text-xs uppercase tracking-wider text-taupe">
+                  Statut
+                </th>
+                <th class="text-left px-5 py-3 font-mono text-xs uppercase tracking-wider text-taupe">
+                  Résultats
+                </th>
+                <th class="text-right px-5 py-3 font-mono text-xs uppercase tracking-wider text-taupe">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="list_students_display">
+              
+            </tbody>
+               {modal === "add-student" && (
+        <Modal
+          title="Add a student"
+          onClose={() => setModal(null)}
+        >
+
+          <StudentForm
+            onSave={handleAdd}
+            onCancel={() => setModal(null)}
+          />
+
+        </Modal>
+      )}
+          </table>
+        </div>
+      </div>
     </>
   );
 };
