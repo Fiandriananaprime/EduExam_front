@@ -1,9 +1,8 @@
 import { useEffect } from "react";
 
-export function Modal({ title, children, onClose }) {
-  // Close with the Escape key
+export const Modal = ({ title, children, onClose })=>  {
   useEffect(() => {
-    function handleEscape(event) {
+    const handleEscape = (event) => {
       if (event.key === "Escape") {
         onClose();
       }
@@ -25,7 +24,7 @@ export function Modal({ title, children, onClose }) {
         className="w-full max-w-2xl overflow-hidden rounded-2xl bg-[#F7F7E8] shadow-2xl"
         onClick={(event) => event.stopPropagation()}
       >
-        {/* Header */}
+      
         <div className="flex items-center justify-between border-b border-[#403D08]/15 px-7 py-5">
           <h2 className="font-serif text-2xl font-semibold text-[#403D08]">
             {title}
@@ -36,11 +35,9 @@ export function Modal({ title, children, onClose }) {
             onClick={onClose}
             className="flex h-9 w-9 items-center justify-center rounded-full text-2xl text-[#403D08]/70 hover:bg-[#403D08]/10"
           >
-            ×
+            
           </button>
         </div>
-
-        {/* Content */}
         <div className="px-7 py-6">
           {children}
         </div>

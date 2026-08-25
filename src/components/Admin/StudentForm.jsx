@@ -1,17 +1,50 @@
-export function StudentForm({ onSave, onCancel }) {
-  function handleSubmit(event) {
+import { useState } from "react";
+export const StudentForm = ({ onSave, onCancel }) => {
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+  });
+  const [error, setError] = useState("");
+
+   const handleChange = (event) => {
+    const { name, value } = event.target;
+
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+
+    setError("");
+  };
+
+  const handleSubmit = (event) => {
     event.preventDefault();
 
-    // We'll handle the student data here later
+    const isFormEmpty =
+      !formData.firstName.trim() ||
+      !formData.lastName.trim() ||
+      !formData.email.trim() ||
+      !formData.password.trim();
 
-    onSave();
-  }
+    if (isFormEmpty) {
+      setError("Please fill in all fields.");
+      return;
+    }
+
+    onSave(formData);
+  };
+
 
   return (
     <form onSubmit={handleSubmit}>
-
+       {error && (
+        <p className="mb-5 rounded-lg bg-red-100 px-4 py-3 text-sm text-red-700">
+          {error}
+        </p>
+      )}
       <div className="grid grid-cols-2 gap-5">
-
         <div className="flex flex-col gap-2">
           <label
             htmlFor="firstName"
@@ -20,7 +53,7 @@ export function StudentForm({ onSave, onCancel }) {
             FIRST NAME
           </label>
 
-          <input
+          <input onChange={handleChange}
             id="firstName"
             name="firstName"
             type="text"
@@ -45,7 +78,6 @@ export function StudentForm({ onSave, onCancel }) {
             className="rounded-lg border border-[#403D08]/30 bg-[#F0F0D0] px-4 py-3 outline-none focus:border-[#403D08]"
           />
         </div>
-
       </div>
 
       <div className="mt-5 flex flex-col gap-2">
@@ -83,7 +115,6 @@ export function StudentForm({ onSave, onCancel }) {
       </div>
 
       <div className="mt-7 flex justify-end gap-3 border-t border-[#403D08]/15 pt-5">
-
         <button
           type="button"
           onClick={onCancel}
@@ -98,9 +129,7 @@ export function StudentForm({ onSave, onCancel }) {
         >
           Add student
         </button>
-
       </div>
-
     </form>
   );
 }
