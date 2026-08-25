@@ -1,6 +1,6 @@
 import { CheckCircle2, XCircle, AlertTriangle, Info, X } from 'lucide-react';
 
-function ToastIcon({ type }) {
+const ToastIcon = ({ type }) => {
   switch (type) {
     case 'success':
       return <CheckCircle2 className="w-4 h-4" />;
@@ -11,7 +11,7 @@ function ToastIcon({ type }) {
     default:
       return <Info className="w-4 h-4" />;
   }
-}
+};
 
 const toastStyles = {
   success: 'bg-paper border-sage text-ink',
@@ -27,7 +27,7 @@ const iconStyles = {
   info: 'text-taupe',
 };
 
-export function ToastContainer({ toasts, onRemove }) {
+export const ToastContainer = ({ toasts, onRemove }) => {
   if (!toasts.length) return null;
 
   return (
@@ -62,4 +62,4 @@ export function ToastContainer({ toasts, onRemove }) {
       ))}
     </div>
   );
-}
+};

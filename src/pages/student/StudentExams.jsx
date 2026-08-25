@@ -15,7 +15,7 @@ import ExamCard from '../../components/students/ExamCard';
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    async function fetchData() {
+    const fetchData = async () => {
       try {
         setLoading(true);
         setError(null);
@@ -28,6 +28,7 @@ import ExamCard from '../../components/students/ExamCard';
         setAvailableExams(examsData || []);
 
         const sortedResults = (resultsData || [])
+          .slice()
           .sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt))
           .slice(0, 2);
 
@@ -38,10 +39,10 @@ import ExamCard from '../../components/students/ExamCard';
       } finally {
         setLoading(false);
       }
-    }
+    };
 
     fetchData();
-  }, []);
+  }, [showToast]);
 
   if (loading) {
     return (
@@ -91,7 +92,7 @@ import ExamCard from '../../components/students/ExamCard';
         </section>
       )}
 
-      {/* Max 2 Recent Completed Exams */}
+      {/* Completed Exams */}
       {recentCompletedResults.length > 0 && (
         <section>
           <h2 className="font-serif text-lg font-semibold text-ink mb-3 flex items-center gap-2">
@@ -99,7 +100,7 @@ import ExamCard from '../../components/students/ExamCard';
               <circle cx="8" cy="8" r="6.5" stroke="#7C9082" strokeWidth="1.5"/>
               <path d="M5 8l2 2 4-4" stroke="#7C9082" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
-            Recent Results (Max 2)
+            Recent Results
           </h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {recentCompletedResults.map(r => (
