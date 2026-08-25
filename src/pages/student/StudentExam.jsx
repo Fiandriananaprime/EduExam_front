@@ -117,14 +117,24 @@ const StudentExamPage = () => {
     }
   };
 
+  const handleBackToDashboard = () => {
+    setIsLeaving(true);
+    setShowLeaveDialog(false);
+    navigate('/student');
+  };
+
   const submitCurrentExam = async () => {
     try {
       setSubmitting(true);
 
       const formattedAnswers = Object.entries(answers).map(
         ([questionId, choiceId]) => ({
-          questionId,
-          choiceId: String(choiceId),
+          questionId: Number.isNaN(Number(questionId))
+            ? questionId
+            : Number(questionId),
+          choiceId: Number.isNaN(Number(choiceId))
+            ? choiceId
+            : Number(choiceId),
         })
       );
 
@@ -148,9 +158,13 @@ const StudentExamPage = () => {
   };
 
   const handleSubmit = async () => {
+    setShowSubmitModal(false);
+    setIsLeaving(true);
+
     const result = await submitCurrentExam();
 
     if (!result) {
+      setIsLeaving(false);
       return;
     }
 
@@ -215,11 +229,13 @@ const StudentExamPage = () => {
           </div>
 
           <div className="font-medium text-ink">
-            {error || 'Exam not found or has no questions.'}
+            {error || (!exam
+              ? 'Exam not found.'
+              : 'This exam has no questions yet.')}
           </div>
 
           <button
-            onClick={() => navigate('/student')}
+            onClick={handleBackToDashboard}
             className="mt-4 text-sage text-sm hover:underline"
           >
             Back to dashboard
@@ -233,6 +249,13 @@ const StudentExamPage = () => {
     <div className="h-screen bg-cream flex flex-col">
       <header className="bg-paper border-b-2 border-ink px-6 py-3 flex items-center justify-between gap-4 sticky top-0 z-30">
         <div className="flex items-center gap-4 min-w-0">
+          <button
+            onClick={handleBackToDashboard}
+            className="text-sage text-sm hover:underline shrink-0"
+          >
+            Back
+          </button>
+
           <span className="font-serif text-lg font-bold text-ink hidden sm:block">
             Exam<span className="text-sage">Hub</span>
           </span>

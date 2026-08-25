@@ -15,9 +15,6 @@ const StudentResults = () => {
       try {
         setLoading(true);
         const results = await getMyResults();
-        // /my/results renvoie maintenant directement examTitle et courseCode
-        // (figes au moment de la soumission cote backend) - plus besoin
-        // d'appeler getMyExams ni de resoudre l'examen a part.
         setAttempts(results || []);
       } catch (err) {
         setError(err.message || 'Failed to load results');
