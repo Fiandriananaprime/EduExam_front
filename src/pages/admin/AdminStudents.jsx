@@ -1,5 +1,5 @@
-import { Modal } from "./AddStudentModal";
-import { StudentForm } from "../students/StudentForm";
+import { Modal } from "../../components/Admin/AddStudentModal";
+import { StudentForm } from "../../components/students/StudentForm";
 import { useState } from "react";
 const AdminStudent = () => {
   const [modal, setModal] = useState(null);
