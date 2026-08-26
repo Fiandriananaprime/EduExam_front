@@ -251,6 +251,7 @@ const StudentExamPage = () => {
         <div className="flex items-center gap-4 min-w-0">
           <button
             onClick={handleBackToDashboard}
+            data-testid="leave-exam-button"
             className="text-sage text-sm hover:underline shrink-0"
           >
             Back
@@ -281,6 +282,7 @@ const StudentExamPage = () => {
           <button
             onClick={() => setShowSubmitModal(true)}
             disabled={submitting}
+            data-testid="submit-exam-button"
             className="px-4 py-2 bg-ink text-cream rounded-lg text-sm font-medium hover:bg-ink/80 transition-colors disabled:opacity-50"
           >
             Submit
