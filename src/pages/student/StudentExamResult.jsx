@@ -52,7 +52,7 @@ const StudentResultPage = () => {
     if (examId) {
       fetchResultData();
     }
-  }, [examId, showToast]);
+  }, [exam, examId, examResult, showToast]);
 
   if (loading) {
     return <div className="p-8 text-center text-taupe font-mono animate-pulse">Loading results...</div>;
@@ -138,19 +138,15 @@ const StudentResultPage = () => {
             const choices = question?.choices || correction.choices || [];
             const selectedId = correction.selectedChoiceId;
             const correctId = correction.correctChoiceId;
-            const selectedChoice = choices.find(
-              choice => String(choice.id) === String(selectedId)
-            );
-            const correctChoice = choices.find(
-              choice => String(choice.id) === String(correctId)
-            );
+
             const isCorrect = correction.isCorrect;
             const isUnanswered = selectedId == null;
 
-            let cardCls = 'border-ink/20';
-            if (isCorrect) cardCls = 'border-sage/40 bg-sage/5';
-            else if (isUnanswered) cardCls = 'border-gold/50 bg-gold/5';
-            else cardCls = 'border-danger/30 bg-danger/5';
+            const cardCls = isCorrect
+              ? 'border-sage/40 bg-sage/5'
+              : isUnanswered
+                ? 'border-gold/50 bg-gold/5'
+                : 'border-danger/30 bg-danger/5';
 
             return (
               <div key={correction.questionId} className={`bg-paper border-2 rounded-xl p-5 ${cardCls}`}>
@@ -178,16 +174,11 @@ const StudentResultPage = () => {
                     const isTheCorrectChoice = String(choice.id) === String(correctId);
                     const isTheSelectedChoice = String(choice.id) === String(selectedId);
                     
-                    let choiceStyles = "border-rule text-taupe bg-paper";
-
-                    if (isTheCorrectChoice) {
-                      choiceStyles = "border-sage bg-sage/10 text-sage font-medium";
-                    } else if (isTheSelectedChoice && !isCorrect) {
-                      choiceStyles = "border-danger bg-danger/10 text-danger font-medium";
-                    } else {
-                      
-                      choiceStyles = "border-rule text-taupe/70 bg-paper/50";
-                    }
+                    const choiceStyles = isTheCorrectChoice
+                      ? "border-sage bg-sage/10 text-sage font-medium"
+                      : isTheSelectedChoice && !isCorrect
+                        ? "border-danger bg-danger/10 text-danger font-medium"
+                        : "border-rule text-taupe/70 bg-paper/50";
 
                     return (
                       <div 

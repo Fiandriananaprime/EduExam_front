@@ -6,7 +6,6 @@ import { useToast } from '../../context/ToastContext';
 const StudentResults = () => {
   const [attempts, setAttempts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   const navigate = useNavigate();
   const { showToast } = useToast();
@@ -17,7 +16,6 @@ const StudentResults = () => {
         const results = await getMyResults();
         setAttempts(results || []);
       } catch (err) {
-        setError(err.message || 'Failed to load results');
         showToast(err.message || 'Failed to load results', 'error');
       } finally {
         setLoading(false);

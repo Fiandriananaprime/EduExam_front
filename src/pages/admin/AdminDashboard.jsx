@@ -15,7 +15,7 @@ const OverviewStatsCOmponent = ({value, label, description}) => {
   );
 };
 
-const dashBoard = () => {
+const Dashboard = () => {
   const gridOv = [];
   
   for (let index = 0; index < dashboardStats.length; index++) {
@@ -41,4 +41,4 @@ const dashBoard = () => {
   );
 };
 
-export default dashBoard;
+export default Dashboard;

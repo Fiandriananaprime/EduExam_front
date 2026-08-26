@@ -34,7 +34,6 @@ const StudentExamPage = () => {
   });
 
   const [showSubmitModal, setShowSubmitModal] = useState(false);
-  const [showLeaveDialog, setShowLeaveDialog] = useState(false);
   const [isLeaving, setIsLeaving] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
@@ -45,12 +44,6 @@ const StudentExamPage = () => {
   );
 
   useEffect(() => {
-    if (blocker.state === 'blocked') {
-      setShowLeaveDialog(true);
-    }
-  }, [blocker.state]);
-
-  useEffect(() => {
     if (!examId) return;
 
     try {
@@ -59,6 +52,7 @@ const StudentExamPage = () => {
         JSON.stringify(answers)
       );
     } catch {
+      return;
     }
   }, [answers, examId]);
 
@@ -119,7 +113,6 @@ const StudentExamPage = () => {
 
   const handleBackToDashboard = () => {
     setIsLeaving(true);
-    setShowLeaveDialog(false);
     navigate('/student');
   };
 
@@ -183,8 +176,6 @@ const StudentExamPage = () => {
 
   const handleLeaveExam = async () => {
     setIsLeaving(true);
-    setShowLeaveDialog(false);
-
     const result = await submitCurrentExam();
 
     if (!result) {
@@ -193,8 +184,6 @@ const StudentExamPage = () => {
       if (blocker.state === 'blocked') {
         blocker.reset();
       }
-
-      setShowLeaveDialog(false);
 
       return;
     }
@@ -205,8 +194,6 @@ const StudentExamPage = () => {
   };
 
   const handleStay = () => {
-    setShowLeaveDialog(false);
-
     if (blocker.state === 'blocked') {
       blocker.reset();
     }
@@ -430,7 +417,7 @@ const StudentExamPage = () => {
       </div>
 
       <LeaveModal
-        isOpen={showLeaveDialog}
+        isOpen={blocker.state === 'blocked'}
         onClose={handleStay}
         onConfirm={handleLeaveExam}
         submitting={submitting}
