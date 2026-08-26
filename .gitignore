@@ -24,6 +24,5 @@ dist-ssr
 *.sw?
 .env
 cypress/screenshots
-cypress/support/
 Test.jsx
 src/components/Modal.tsx
