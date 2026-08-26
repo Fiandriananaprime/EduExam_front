@@ -59,6 +59,7 @@ const ExamCard = ({ exam, result, done }) => {
         ) : (
           <button
             onClick={() => navigate(`/student/exams/${exam.id}`)}
+            data-testid="start-exam-button"
             className="w-full py-2.5 bg-ink text-cream rounded-lg text-sm font-medium hover:bg-ink/80 transition-colors"
           >
             Start Exam

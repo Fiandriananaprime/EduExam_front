@@ -23,5 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 .env
+cypress/screenshots
 Test.jsx
 src/components/Modal.tsx
