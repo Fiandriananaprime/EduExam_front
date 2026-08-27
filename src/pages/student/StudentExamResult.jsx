@@ -74,7 +74,10 @@ const StudentResultPage = () => {
     );
   }
 
-  const pct = Math.round((examResult.score / examResult.maxScore) * 100);
+  const score = Number(examResult.score) || 0;
+  const maxScore = Number(examResult.maxScore);
+  const hasMaxScore = Number.isFinite(maxScore) && maxScore > 0;
+  const pct = hasMaxScore ? Math.round((score / maxScore) * 100) : 0;
   const corrections = examResult.corrections || [];
   const correctCount = corrections.filter(c => c.isCorrect).length;
   const incorrectCount = corrections.filter(
@@ -103,7 +106,7 @@ const StudentResultPage = () => {
         <div className="relative">
           <div className="font-mono text-xs text-taupe uppercase tracking-widest mb-2">Your score</div>
           <div className="font-serif text-7xl font-bold text-ink mb-1">
-            {examResult.score}<span className="text-3xl font-medium text-taupe">/{examResult.maxScore}</span>
+            {score}<span className="text-3xl font-medium text-taupe">/{hasMaxScore ? maxScore : '—'}</span>
           </div>
           <div className={`font-mono text-2xl font-bold mb-4 ${pct >= 50 ? 'text-sage' : 'text-danger'}`}>{pct}%</div>
 

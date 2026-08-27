@@ -74,7 +74,10 @@ const StudentResults = () => {
               </thead>
               <tbody>
                 {attempts.map((a, i) => {
-                  const percentage = a.maxScore ? Math.round((a.score / a.maxScore) * 100) : 0;
+                  const score = Number(a.score) || 0;
+                  const maxScore = Number(a.maxScore);
+                  const hasMaxScore = Number.isFinite(maxScore) && maxScore > 0;
+                  const percentage = hasMaxScore ? Math.round((score / maxScore) * 100) : 0;
                   const passed = percentage >= 50;
 
                   return (
@@ -95,7 +98,7 @@ const StudentResults = () => {
                         })}
                       </td>
                       <td className="px-5 py-3 font-mono text-sm font-bold text-ink">
-                        {a.score}/{a.maxScore}
+                        {score}/{hasMaxScore ? maxScore : '—'}
                       </td>
                       <td className="px-5 py-3">
                         <div className="flex items-center gap-2">
