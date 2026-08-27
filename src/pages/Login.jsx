@@ -31,7 +31,8 @@ const Login = () =>  {
         navigate("/admin");
         }
 
-        showToast(`Welcome ${data.user.firstName}` , 'success')
+        const displayName = data.user.name || data.user.firstName || data.user.email || "there";
+        showToast(`Welcome ${displayName}`, "success");
     } catch (error) {
       showToast(error.message || 'An error occurred', 'error')
     } finally {
