@@ -1,7 +1,11 @@
-const getExamStatus = (startsAt, endsAt) => {
+const getExamStatus = (startDate, endDate) => {
   const now = new Date();
-  const start = new Date(startsAt);
-  const end = new Date(endsAt);
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
+    return "Unknown";
+  }
 
   if (now < start) {
     return "Upcoming";
@@ -15,7 +19,10 @@ const getExamStatus = (startsAt, endsAt) => {
 };
 
 const formatDate = (date) => {
-  return new Date(date).toLocaleString("en-GB", {
+  const parsedDate = new Date(date);
+  if (Number.isNaN(parsedDate.getTime())) return "—";
+
+  return parsedDate.toLocaleString("en-GB", {
     day: "2-digit",
     month: "short",
     year: "numeric",
@@ -32,17 +39,16 @@ export const TrExam = ({
   onQuestions,
   onResults,
 }) => {
-  const status = getExamStatus(
-    exam.startsAt,
-    exam.endsAt
-  );
+  const status = getExamStatus(exam.startDate, exam.endDate);
 
   const questionsCount =
+    exam.questionCount ??
     exam.questionsCount ??
     exam.questions?.length ??
     0;
 
   const attempts =
+    exam.attemptsCount ??
     exam.attempts ??
     exam.attemptCount ??
     0;
@@ -83,6 +89,8 @@ export const TrExam = ({
               ? "rounded-md bg-sage/20 px-2.5 py-1 font-mono text-xs text-taupe"
               : status === "Finished"
                 ? "rounded-md bg-ink/10 px-2.5 py-1 font-mono text-xs text-taupe"
+                : status === "Unknown"
+                  ? "rounded-md bg-danger/10 px-2.5 py-1 font-mono text-xs text-danger"
                 : "rounded-md bg-cream px-2.5 py-1 font-mono text-xs text-ink"
           }
         >
