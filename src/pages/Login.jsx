@@ -26,6 +26,7 @@ const Login = () =>  {
 
         if (data.user.role === "STUDENT") {
         navigate("/student");
+        
         } else if (data.user.role === "ADMIN") {
         navigate("/admin");
         }
@@ -87,6 +88,7 @@ const Login = () =>  {
                 <input
                   type="email"
                   placeholder="prenom.nom@etablissement.mg"
+                  data-testid="login-username"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full border-[1.5px] border-ink rounded-md bg-cream px-3 py-2.5 text-sm text-ink placeholder-taupe focus:outline-none focus:ring-2 focus:ring-sage transition-colors"
@@ -100,6 +102,7 @@ const Login = () =>  {
                 <input
                   type="password"
                   placeholder="••••••••"
+                  data-testid="login-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full border-[1.5px] border-ink rounded-md bg-cream px-3 py-2.5 text-sm text-ink placeholder-taupe focus:outline-none focus:ring-2 focus:ring-sage transition-colors"
@@ -122,6 +125,7 @@ const Login = () =>  {
               <button
                 type="submit"
                 disabled={loading}
+                data-testid="login-submit"
                 className="w-full bg-ink text-cream rounded-md py-3 font-semibold text-sm hover:bg-ink/80 transition-colors flex items-center justify-center gap-2"
               >
                 {loading ? "Logging in..." : "Log in"}

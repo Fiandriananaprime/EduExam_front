@@ -6,7 +6,6 @@ import { useToast } from '../../context/ToastContext';
 const StudentResults = () => {
   const [attempts, setAttempts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   const navigate = useNavigate();
   const { showToast } = useToast();
@@ -15,12 +14,8 @@ const StudentResults = () => {
       try {
         setLoading(true);
         const results = await getMyResults();
-        // /my/results renvoie maintenant directement examTitle et courseCode
-        // (figes au moment de la soumission cote backend) - plus besoin
-        // d'appeler getMyExams ni de resoudre l'examen a part.
         setAttempts(results || []);
       } catch (err) {
-        setError(err.message || 'Failed to load results');
         showToast(err.message || 'Failed to load results', 'error');
       } finally {
         setLoading(false);
@@ -79,7 +74,10 @@ const StudentResults = () => {
               </thead>
               <tbody>
                 {attempts.map((a, i) => {
-                  const percentage = a.maxScore ? Math.round((a.score / a.maxScore) * 100) : 0;
+                  const score = Number(a.score) || 0;
+                  const maxScore = Number(a.maxScore);
+                  const hasMaxScore = Number.isFinite(maxScore) && maxScore > 0;
+                  const percentage = hasMaxScore ? Math.round((score / maxScore) * 100) : 0;
                   const passed = percentage >= 50;
 
                   return (
@@ -100,7 +98,7 @@ const StudentResults = () => {
                         })}
                       </td>
                       <td className="px-5 py-3 font-mono text-sm font-bold text-ink">
-                        {a.score}/{a.maxScore}
+                        {score}/{hasMaxScore ? maxScore : '—'}
                       </td>
                       <td className="px-5 py-3">
                         <div className="flex items-center gap-2">

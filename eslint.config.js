@@ -18,4 +18,37 @@ export default defineConfig([
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
   },
+  {
+    files: ['cypress/**/*.js'],
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+        ...globals.cypress,
+        Cypress: 'readonly',
+        beforeEach: 'readonly',
+        cy: 'readonly',
+        describe: 'readonly',
+<<<<<<< HEAD
+        expect: 'readonly',
+=======
+>>>>>>> 62f697924ea0028f9b8e6955591495a6c067ec7b
+        it: 'readonly',
+      },
+    },
+  },
+  {
+    files: ['cypress.config.js'],
+    languageOptions: {
+      globals: globals.node,
+    },
+  },
+<<<<<<< HEAD
+  {
+    files: ['src/context/AuthContext.jsx'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+    },
+  },
+=======
+>>>>>>> 62f697924ea0028f9b8e6955591495a6c067ec7b
 ])

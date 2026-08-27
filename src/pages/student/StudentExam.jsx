@@ -34,7 +34,6 @@ const StudentExamPage = () => {
   });
 
   const [showSubmitModal, setShowSubmitModal] = useState(false);
-  const [showLeaveDialog, setShowLeaveDialog] = useState(false);
   const [isLeaving, setIsLeaving] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
@@ -45,12 +44,6 @@ const StudentExamPage = () => {
   );
 
   useEffect(() => {
-    if (blocker.state === 'blocked') {
-      setShowLeaveDialog(true);
-    }
-  }, [blocker.state]);
-
-  useEffect(() => {
     if (!examId) return;
 
     try {
@@ -59,6 +52,7 @@ const StudentExamPage = () => {
         JSON.stringify(answers)
       );
     } catch {
+      return;
     }
   }, [answers, examId]);
 
@@ -117,14 +111,23 @@ const StudentExamPage = () => {
     }
   };
 
+  const handleBackToDashboard = () => {
+    setIsLeaving(true);
+    navigate('/student');
+  };
+
   const submitCurrentExam = async () => {
     try {
       setSubmitting(true);
 
       const formattedAnswers = Object.entries(answers).map(
         ([questionId, choiceId]) => ({
-          questionId,
-          choiceId: String(choiceId),
+          questionId: Number.isNaN(Number(questionId))
+            ? questionId
+            : Number(questionId),
+          choiceId: Number.isNaN(Number(choiceId))
+            ? choiceId
+            : Number(choiceId),
         })
       );
 
@@ -148,9 +151,13 @@ const StudentExamPage = () => {
   };
 
   const handleSubmit = async () => {
+    setShowSubmitModal(false);
+    setIsLeaving(true);
+
     const result = await submitCurrentExam();
 
     if (!result) {
+      setIsLeaving(false);
       return;
     }
 
@@ -169,8 +176,6 @@ const StudentExamPage = () => {
 
   const handleLeaveExam = async () => {
     setIsLeaving(true);
-    setShowLeaveDialog(false);
-
     const result = await submitCurrentExam();
 
     if (!result) {
@@ -179,8 +184,6 @@ const StudentExamPage = () => {
       if (blocker.state === 'blocked') {
         blocker.reset();
       }
-
-      setShowLeaveDialog(false);
 
       return;
     }
@@ -191,8 +194,6 @@ const StudentExamPage = () => {
   };
 
   const handleStay = () => {
-    setShowLeaveDialog(false);
-
     if (blocker.state === 'blocked') {
       blocker.reset();
     }
@@ -215,11 +216,13 @@ const StudentExamPage = () => {
           </div>
 
           <div className="font-medium text-ink">
-            {error || 'Exam not found or has no questions.'}
+            {error || (!exam
+              ? 'Exam not found.'
+              : 'This exam has no questions yet.')}
           </div>
 
           <button
-            onClick={() => navigate('/student')}
+            onClick={handleBackToDashboard}
             className="mt-4 text-sage text-sm hover:underline"
           >
             Back to dashboard
@@ -233,6 +236,14 @@ const StudentExamPage = () => {
     <div className="h-screen bg-cream flex flex-col">
       <header className="bg-paper border-b-2 border-ink px-6 py-3 flex items-center justify-between gap-4 sticky top-0 z-30">
         <div className="flex items-center gap-4 min-w-0">
+          <button
+            onClick={handleBackToDashboard}
+            data-testid="leave-exam-button"
+            className="text-sage text-sm hover:underline shrink-0"
+          >
+            Back
+          </button>
+
           <span className="font-serif text-lg font-bold text-ink hidden sm:block">
             Exam<span className="text-sage">Hub</span>
           </span>
@@ -258,6 +269,7 @@ const StudentExamPage = () => {
           <button
             onClick={() => setShowSubmitModal(true)}
             disabled={submitting}
+            data-testid="submit-exam-button"
             className="px-4 py-2 bg-ink text-cream rounded-lg text-sm font-medium hover:bg-ink/80 transition-colors disabled:opacity-50"
           >
             Submit
@@ -405,7 +417,7 @@ const StudentExamPage = () => {
       </div>
 
       <LeaveModal
-        isOpen={showLeaveDialog}
+        isOpen={blocker.state === 'blocked'}
         onClose={handleStay}
         onConfirm={handleLeaveExam}
         submitting={submitting}
