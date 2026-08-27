@@ -87,6 +87,7 @@ const AdminExams = () => {
       setExams((currentExams) => [...currentExams, newExam]);
 
       setModal(null);
+      showToast("Exam created successfully.", "success");
     } finally {
       setSubmitting(false);
     }
@@ -105,6 +106,7 @@ const AdminExams = () => {
       );
 
       setModal(null);
+      showToast("Exam updated successfully.", "success");
     } finally {
       setSubmitting(false);
     }
@@ -123,6 +125,7 @@ const AdminExams = () => {
       setExams((currentExams) =>
         currentExams.filter((currentExam) => currentExam.id !== exam.id),
       );
+      showToast("Exam deleted successfully.", "success");
     } catch (error) {
       showToast(error.message, "error");
     }

@@ -28,6 +28,7 @@ const AdminQuestions = () => {
                 ),
             );
             setEditingQuestion(null);
+            showToast("Question updated successfully.", "success");
         } catch (err) {
             showToast(err.message || "Unable to update the question.", "error");
         } finally {
