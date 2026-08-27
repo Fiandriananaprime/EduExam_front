@@ -28,7 +28,10 @@ export default defineConfig([
         beforeEach: 'readonly',
         cy: 'readonly',
         describe: 'readonly',
+<<<<<<< HEAD
         expect: 'readonly',
+=======
+>>>>>>> 62f697924ea0028f9b8e6955591495a6c067ec7b
         it: 'readonly',
       },
     },
@@ -39,10 +42,13 @@ export default defineConfig([
       globals: globals.node,
     },
   },
+<<<<<<< HEAD
   {
     files: ['src/context/AuthContext.jsx'],
     rules: {
       'react-refresh/only-export-components': 'off',
     },
   },
+=======
+>>>>>>> 62f697924ea0028f9b8e6955591495a6c067ec7b
 ])
