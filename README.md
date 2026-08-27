@@ -29,7 +29,7 @@ npm install
 Create a `.env` file at the root of the project:
 
 ```env
-VITE_API_URL=http://localhost:8080
+VITE_API_URL=http://localhost:3001
 ```
 
 Set `VITE_API_URL` to the URL of the backend API you are using.

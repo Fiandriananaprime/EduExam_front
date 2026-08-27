@@ -1,6 +1,7 @@
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL_TEST;
+console.log(API_URL);
 
-async function apiRequest(endpoint, options = {}) {
+const apiRequest = async (endpoint, options = {}) => {
   const token = localStorage.getItem("token");
 
   const response = await fetch(`${API_URL}${endpoint}`, {
@@ -30,8 +31,12 @@ async function apiRequest(endpoint, options = {}) {
 
   if (response.status === 403) {
     throw new Error(
-      data?.message || "You do not have permission to access this resource"
+      data?.message || "You do not have permission to access this resource",
     );
+  }
+
+  if(response.status === 404){
+    throw new Error(data?.message || "Ressource not found")
   }
 
   if (!response.ok) {
@@ -39,7 +44,7 @@ async function apiRequest(endpoint, options = {}) {
   }
 
   return data;
-}
+};
 
 export const getStudents = () => {
   return apiRequest("/students");
