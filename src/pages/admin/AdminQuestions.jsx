@@ -1,11 +1,39 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getExamQuestions } from "../../api/adminApi";
+import { Pencil } from "lucide-react";
+import { getExamQuestions, updateQuestion } from "../../api/adminApi";
+import  EditQuestionModal  from "../../components/Admin/QuestionForm";
 
 const AdminQuestions = () => {
     const { id } = useParams();
     const [questions, setQuestions] = useState([]);
     const [error, setError] = useState("");
+    const [editingQuestion, setEditingQuestion] = useState(null);
+    const [saving, setSaving] = useState(false);
+
+    const handleSave = async (payload) => {
+        setSaving(true);
+        setError("");
+
+        try {
+            const updatedQuestion = await updateQuestion(payload.id, {
+                statement: payload.statement,
+                points: payload.points,
+                choices: payload.choices,
+            });
+
+            setQuestions((currentQuestions) =>
+                currentQuestions.map((question) =>
+                    question.id === updatedQuestion.id ? updatedQuestion : question,
+                ),
+            );
+            setEditingQuestion(null);
+        } catch (err) {
+            setError(err.message || "Unable to update the question.");
+        } finally {
+            setSaving(false);
+        }
+    };
 
     useEffect(() => {
         getExamQuestions(id)
@@ -25,7 +53,21 @@ const AdminQuestions = () => {
             <div className="space-y-3">
                 {questions.map((question, index) => (
                     <article key={question.id} className="rounded-xl border-2 border-ink/20 bg-paper p-5">
-                        <div className="font-mono text-xs text-taupe">Question {index + 1} · {question.points} pt</div>
+                        <div className="flex items-start justify-between gap-4">
+                            <div className="font-mono text-xs text-taupe">Question {index + 1} · {question.points} pt</div>
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setEditingQuestion(question);
+                                    setError("");
+                                }}
+                                aria-label={`Modifier la question ${index + 1}`}
+                                title="Modifier la question"
+                                className="rounded-md border border-ink/30 p-2 text-ink transition-colors hover:bg-ink hover:text-cream"
+                            >
+                                <Pencil className="h-4 w-4" aria-hidden="true" />
+                            </button>
+                        </div>
                         <h2 className="mt-2 font-serif text-lg font-semibold text-ink">{question.statement}</h2>
                         <ul className="mt-3 space-y-1 text-sm text-taupe">
                             {(question.choices || []).map((choice) => (
@@ -35,6 +77,14 @@ const AdminQuestions = () => {
                     </article>
                 ))}
             </div>
+            {editingQuestion && (
+                <EditQuestionModal
+                    question={editingQuestion}
+                    saving={saving}
+                    onSave={handleSave}
+                    onClose={() => setEditingQuestion(null)}
+                />
+            )}
         </section>
     );
 };
