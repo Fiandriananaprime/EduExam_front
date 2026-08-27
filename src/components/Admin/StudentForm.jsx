@@ -1,49 +1,35 @@
-import { useState } from "react";
+import { useToast } from "../../context/ToastContext";
 export const StudentForm = ({ onSave, onCancel }) => {
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-  });
-  const [error, setError] = useState("");
-
-   const handleChange = (event) => {
-    const { name, value } = event.target;
-
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-
-    setError("");
-  };
-
+  const { showToast } = useToast();
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    const isFormEmpty =
-      !formData.firstName.trim() ||
-      !formData.lastName.trim() ||
-      !formData.email.trim() ||
-      !formData.password.trim();
+    const formData = new FormData(event.currentTarget);
 
-    if (isFormEmpty) {
-      setError("Please fill in all fields.");
+    const student = {
+      firstName: formData.get("firstName")?.trim() || "",
+      lastName: formData.get("lastName")?.trim() || "",
+      email: formData.get("email")?.trim() || "",
+      password: formData.get("password")?.trim() || "",
+      status: "ACTIVE"
+    };
+
+    if (
+      !student.firstName ||
+      !student.lastName ||
+      !student.email ||
+      !student.password
+    ) {
+      showToast("Please fill in all fields.", "error");
       return;
     }
-
-    onSave(formData);
+    
+    onSave(student);
   };
 
 
   return (
     <form onSubmit={handleSubmit}>
-       {error && (
-        <p className="mb-5 rounded-lg bg-red-100 px-4 py-3 text-sm text-red-700">
-          {error}
-        </p>
-      )}
       <div className="grid grid-cols-2 gap-5">
         <div className="flex flex-col gap-2">
           <label
@@ -53,7 +39,7 @@ export const StudentForm = ({ onSave, onCancel }) => {
             FIRST NAME
           </label>
 
-          <input onChange={handleChange}
+          <input 
             id="firstName"
             name="firstName"
             type="text"
@@ -102,7 +88,7 @@ export const StudentForm = ({ onSave, onCancel }) => {
           htmlFor="password"
           className="text-xs font-medium tracking-widest text-[#403D08]"
         >
-          TEMPORARY PASSWORD
+          PASSWORD
         </label>
 
         <input
