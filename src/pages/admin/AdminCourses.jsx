@@ -3,6 +3,7 @@ import { Modal } from "../../components/Admin/Modal";
 import { CourseForm } from "../../components/Admin/courseForm";
 import {
   getCourses,
+  getExams,
   createCourse,
   updateCourse,
   deleteCourse,
@@ -19,9 +20,19 @@ const AdminCourses = () => {
   useEffect(() => {
     const loadCourses = async () => {
       try {
-        const data = await getCourses();
+        const [coursesData, examsData] = await Promise.all([
+          getCourses(),
+          getExams(),
+        ]);
+        const exams = Array.isArray(examsData) ? examsData : [];
+        const courses = Array.isArray(coursesData) ? coursesData : [];
 
-        setCourses(Array.isArray(data) ? data : []);
+        setCourses(courses.map((course) => ({
+          ...course,
+          examCount: exams.filter(
+            (exam) => String(exam.courseId) === String(course.id),
+          ).length,
+        })));
       } catch {
         showToast("Unable to load courses.", "error");
       }
@@ -56,7 +67,9 @@ const AdminCourses = () => {
     try {
       const updated = await updateCourse(selectedCourse.id, updatedCourse);
       setCourses((currentCourses) => currentCourses.map((course) => (
-        course.id === updated.id ? updated : course
+        course.id === updated.id
+          ? { ...updated, examCount: course.examCount ?? 0 }
+          : course
       )));
       handleCloseModal();
       showToast("Course updated successfully.", "success");
@@ -66,7 +79,9 @@ const AdminCourses = () => {
   };
 
   const handleDeleteCourse = async (course) => {
-    if (!window.confirm(`Are you sure you want to delete "${course.title}"?`)) {
+    const courseName = course.name || course.title || course.code || "this course";
+
+    if (!window.confirm(`Are you sure you want to delete "${courseName}"?`)) {
       return;
     }
 
@@ -76,8 +91,8 @@ const AdminCourses = () => {
         (currentCourse) => currentCourse.id !== course.id,
       ));
       showToast("Course deleted successfully.", "success");
-    } catch {
-      showToast("Unable to delete the course.", "error");
+    } catch (error) {
+      showToast(error.message || "Unable to delete the course.", "error");
     }
   };
 
