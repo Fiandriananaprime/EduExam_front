@@ -37,6 +37,7 @@ const AdminCourses = () => {
       setCourses((currentCourses) => [...currentCourses, newCourse]);
 
       setModal(null);
+      showToast("Course created successfully.", "success");
     } catch {
       showToast("Unable to create the course.", "error");
     }
@@ -58,6 +59,7 @@ const AdminCourses = () => {
         course.id === updated.id ? updated : course
       )));
       handleCloseModal();
+      showToast("Course updated successfully.", "success");
     } catch {
       showToast("Unable to update the course.", "error");
     }
@@ -73,6 +75,7 @@ const AdminCourses = () => {
       setCourses((currentCourses) => currentCourses.filter(
         (currentCourse) => currentCourse.id !== course.id,
       ));
+      showToast("Course deleted successfully.", "success");
     } catch {
       showToast("Unable to delete the course.", "error");
     }
