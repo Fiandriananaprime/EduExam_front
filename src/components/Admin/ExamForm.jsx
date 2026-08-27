@@ -19,6 +19,7 @@ export const ExamForm = ({
 
   useEffect(() => {
     if (exam) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setForm({
         courseId: exam.courseId ?? "",
         title: exam.title ?? "",

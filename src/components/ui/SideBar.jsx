@@ -9,7 +9,7 @@ import {
   Users, 
   BookOpen 
 } from 'lucide-react';
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/useAuth";
 import { useToast } from "../../context/ToastContext";
 
 const NAV_CONFIG = {

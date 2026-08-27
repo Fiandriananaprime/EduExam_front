@@ -63,6 +63,8 @@ const AdminExams = () => {
   };
 
   useEffect(() => {
+    // Loading data synchronizes the page with the backend response.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadData();
   }, []);
 
