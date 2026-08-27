@@ -25,10 +25,13 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.4",
     "babel-plugin-react-compiler": "^1.0.0",
+    "cors": "^2.8.6",
     "eslint": "^10.8.0",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.3",
+    "express": "^5.2.1",
     "globals": "^17.7.0",
+    "json-server": "^1.0.0-beta.15",
     "vite": "^8.2.0"
   }
 }
