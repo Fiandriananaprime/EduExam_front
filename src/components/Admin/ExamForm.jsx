@@ -23,11 +23,11 @@ export const ExamForm = ({
         courseId: exam.courseId ?? "",
         title: exam.title ?? "",
         description: exam.description ?? "",
-        startsAt: exam.startsAt
-          ? exam.startsAt.slice(0, 16)
+        startsAt: exam.startDate
+          ? exam.startDate.slice(0, 16)
           : "",
-        endsAt: exam.endsAt
-          ? exam.endsAt.slice(0, 16)
+        endsAt: exam.endDate
+          ? exam.endDate.slice(0, 16)
           : "",
       });
 
@@ -80,8 +80,8 @@ export const ExamForm = ({
         courseId: form.courseId,
         title: form.title.trim(),
         description: form.description.trim(),
-        startsAt: start.toISOString(),
-        endsAt: end.toISOString(),
+        startDate: start.toISOString(),
+        endDate: end.toISOString(),
       });
     } catch (error) {
       setError(error.message);
