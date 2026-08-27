@@ -9,6 +9,7 @@ import {
 } from "../../api/adminApi";
 import { TrStudent } from "../../components/Admin/TrStudents";
 import { UpdateStudent } from "../../components/Admin/updateStudent";
+import { useToast } from "../../context/ToastContext";
 
 
 const AdminStudent = () => {
@@ -17,12 +18,14 @@ const AdminStudent = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [submitting, setSubmitting] = useState(false);
+  const { showToast } = useToast();
   const handleAdd = async (formValues) => {
     const data = await createStudent(formValues);
     setModal(null);
     if (data) {
       SetStudents((currentStudents) => [...currentStudents, data]);
     }
+    showToast("Student created successfully.", "success");
   };
   useEffect(() => {
     const loadStudents = async () => {
@@ -64,6 +67,7 @@ const AdminStudent = () => {
       setModal(null);
       const data = await getStudents();
       SetStudents(Array.isArray(data) ? data : []);
+      showToast("Student updated successfully.", "success");
     } finally {
       setSubmitting(false);
     }
@@ -78,6 +82,7 @@ const AdminStudent = () => {
     await deleteStudent(student.id);
     const data = await getStudents();
     SetStudents(Array.isArray(data) ? data : []);
+    showToast("Student deactivated successfully.", "success");
   };
   return (
     <>
