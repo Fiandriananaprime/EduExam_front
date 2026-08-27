@@ -63,6 +63,8 @@ const AdminExams = () => {
   };
 
   useEffect(() => {
+    // Loading data synchronizes the page with the backend response.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadData();
   }, []);
 
@@ -162,7 +164,7 @@ const AdminExams = () => {
 
       {courses.length === 0 && !loading && (
         <p className="mt-5 rounded-lg bg-cream px-4 py-3 font-mono text-sm text-taupe">
-          Create a course first — every exam belongs to a course.
+           Create a course first — every exam must belong to a course.
         </p>
       )}
 

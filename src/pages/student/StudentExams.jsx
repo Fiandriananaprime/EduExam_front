@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { GraduationCap  } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context/useAuth';
 import { useToast } from '../../context/ToastContext';
 import { getMyExams, getMyResults } from '../../api/studentApi';
 import ExamCard from '../../components/students/ExamCard';

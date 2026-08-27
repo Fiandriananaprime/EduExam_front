@@ -1,6 +1,6 @@
 import { Outlet, useLocation } from 'react-router-dom';
 import Sidebar from './ui/SideBar';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
 
 const Layout = () => {
   const { user } = useAuth();
