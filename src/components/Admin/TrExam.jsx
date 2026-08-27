@@ -22,13 +22,13 @@ const formatDate = (date) => {
   const parsedDate = new Date(date);
   if (Number.isNaN(parsedDate.getTime())) return "—";
 
-  return parsedDate.toLocaleString("en-GB", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  const day = String(parsedDate.getDate()).padStart(2, "0");
+  const month = String(parsedDate.getMonth() + 1).padStart(2, "0");
+  const year = String(parsedDate.getFullYear()).slice(-2);
+  const hours = String(parsedDate.getHours()).padStart(2, "0");
+  const minutes = String(parsedDate.getMinutes()).padStart(2, "0");
+
+  return `${day}/${month}/${year} ${hours}:${minutes}`;
 };
 
 export const TrExam = ({
@@ -66,11 +66,11 @@ export const TrExam = ({
 
       <td className="px-5 py-4 font-mono text-sm text-taupe">
         <div>
-          {formatDate(exam.startsAt)}
+          {formatDate(exam.startDate)}
         </div>
 
         <div className="mt-1">
-          → {formatDate(exam.endsAt)}
+          → {formatDate(exam.endDate)}
         </div>
       </td>
 
