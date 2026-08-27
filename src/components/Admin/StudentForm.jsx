@@ -1,39 +1,31 @@
 import { useState } from "react";
 export const StudentForm = ({ onSave, onCancel }) => {
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-  });
-  const [error, setError] = useState("");
-
-   const handleChange = (event) => {
-    const { name, value } = event.target;
-
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-
-    setError("");
-  };
-
+   const [error, setError] = useState("");
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    const isFormEmpty =
-      !formData.firstName.trim() ||
-      !formData.lastName.trim() ||
-      !formData.email.trim() ||
-      !formData.password.trim();
+    const formData = new FormData(event.currentTarget);
 
-    if (isFormEmpty) {
+    const student = {
+      firstName: formData.get("firstName")?.trim() || "",
+      lastName: formData.get("lastName")?.trim() || "",
+      email: formData.get("email")?.trim() || "",
+      password: formData.get("password")?.trim() || "",
+      status: "ACTIVE"
+    };
+
+    if (
+      !student.firstName ||
+      !student.lastName ||
+      !student.email ||
+      !student.password
+    ) {
       setError("Please fill in all fields.");
       return;
     }
-
-    onSave(formData);
+    setError("");
+    
+    onSave(student);
   };
 
 
@@ -53,7 +45,7 @@ export const StudentForm = ({ onSave, onCancel }) => {
             FIRST NAME
           </label>
 
-          <input onChange={handleChange}
+          <input 
             id="firstName"
             name="firstName"
             type="text"
@@ -102,7 +94,7 @@ export const StudentForm = ({ onSave, onCancel }) => {
           htmlFor="password"
           className="text-xs font-medium tracking-widest text-[#403D08]"
         >
-          TEMPORARY PASSWORD
+          PASSWORD
         </label>
 
         <input
