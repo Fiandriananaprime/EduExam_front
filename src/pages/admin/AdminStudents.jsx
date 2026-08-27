@@ -32,12 +32,13 @@ const AdminStudent = () => {
 
   const filteredStudents = students.filter((student) => student && typeof student === "object").filter((student) => {
     const search = searchTerm.trim().toLowerCase();
+    const status = student.isActive ? "active" : "disactivated";
 
     return (
       student.firstName?.toLowerCase().includes(search) ||
       student.lastName?.toLowerCase().includes(search) ||
       student.email?.toLowerCase().includes(search) ||
-      student.status?.toLowerCase().includes(search.toLocaleLowerCase())
+      status.includes(search)
     );
   });
   const handleSave = async (id, payload) => {
@@ -46,7 +47,7 @@ const AdminStudent = () => {
       await updateStudent(id, payload);
       setModal(null);
       const data = await getStudents();
-      SetStudents(data);
+      SetStudents(Array.isArray(data) ? data : []);
     } finally {
       setSubmitting(false);
     }
@@ -60,7 +61,7 @@ const AdminStudent = () => {
               Students
             </p>
             <p className="text-sm text-taupe mt-1 font-mono">
-              {students.length} Created accouts
+              {students.length} Created accounts
             </p>
           </div>
           <button
@@ -141,9 +142,6 @@ const AdminStudent = () => {
                 <th class="text-left px-5 py-3 font-mono text-xs uppercase tracking-wider text-taupe">
                   Statut
                 </th>
-                <th class="text-left px-5 py-3 font-mono text-xs uppercase tracking-wider text-taupe">
-                  Résultats
-                </th>
                 <th class="text-right px-5 py-3 font-mono text-xs uppercase tracking-wider text-taupe">
                   Actions
                 </th>
@@ -154,9 +152,8 @@ const AdminStudent = () => {
                 return (
                   <TrStudent
                     name={`${student.firstName || ""} ${student.lastName || ""}`.trim() || "Student"}
-                    status={student.status || null}
+                    status={student.isActive ? "ACTIVE" : "DISACTIVATED"}
                     email={student.email}
-                    result={student.result || null}
                     id={student.id}
                     onEdit={() => setModal(student)}
                   />

@@ -42,13 +42,13 @@ const DisaBledStudentsAction = ({ onEdit }) => {
     </div>
   );
 };
-export const TrStudent = ({ name, email, status, result, id, onEdit }) => {
+export const TrStudent = ({ name, email, status, id, onEdit }) => {
   if (status === "DISACTIVATED") {
     return (
       <tr className="px-5 py-3 opacity-60" key={id}>
         <td className="px-5 py-3 flex items-center gap-2">
           <div class="w-8 h-8 rounded-full bg-gold/50 border border-ink/20 flex items-center justify-center font-serif font-bold text-xs text-ink shrink-0">
-            {name[0]}
+            {name?.[0] || "?"}
           </div>
           <span className="font-medium text-ink">{name}</span>
         </td>
@@ -58,7 +58,6 @@ export const TrStudent = ({ name, email, status, result, id, onEdit }) => {
             {status}
           </span>
         </td>
-        <td className="px-5 py-3 font-mono text-xs text-ink">{result}</td>
         <td className="px-5 py-3">
             {status === "ACTIVE" ? (
             <EnabledStudentsAction onEdit={onEdit} />
@@ -73,7 +72,7 @@ export const TrStudent = ({ name, email, status, result, id, onEdit }) => {
     <tr className="px-5 py-3" key={id}>
       <td className="px-5 py-3 flex items-center gap-2">
         <div class="w-8 h-8 rounded-full bg-gold/50 border border-ink/20 flex items-center justify-center font-serif font-bold text-xs text-ink shrink-0">
-          {name[0]}
+          {name?.[0] || "?"}
         </div>
         <span className="font-medium text-ink">{name}</span>
       </td>
@@ -83,7 +82,6 @@ export const TrStudent = ({ name, email, status, result, id, onEdit }) => {
           {status}
         </span>
       </td>
-      <td className="px-5 py-3 font-mono text-xs text-ink">{result}</td>
       <td className="px-5 py-3">
         {status === "ACTIVE" ? (
           <EnabledStudentsAction onEdit={onEdit} />
