@@ -7,10 +7,10 @@ export const StudentForm = ({ onSave, onCancel }) => {
     const formData = new FormData(event.currentTarget);
 
     const student = {
-      firstName: formData.get("firstName").trim(),
-      lastName: formData.get("lastName").trim(),
-      email: formData.get("email").trim(),
-      password: formData.get("password").trim(),
+      firstName: formData.get("firstName")?.trim() || "",
+      lastName: formData.get("lastName")?.trim() || "",
+      email: formData.get("email")?.trim() || "",
+      password: formData.get("password")?.trim() || "",
       status: "ACTIVE"
     };
 

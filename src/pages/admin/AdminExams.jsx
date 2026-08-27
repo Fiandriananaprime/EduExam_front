@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { Modal } from "../../components/Admin/Modal";
 import { ExamForm } from "../../components/Admin/ExamForm";
@@ -11,6 +11,8 @@ import {
   createExam,
   updateExam,
   deleteExam,
+  getExamQuestions,
+  getExamResults,
 } from "../../api/adminApi";
 
 const AdminExams = () => {
@@ -23,6 +25,7 @@ const AdminExams = () => {
   const [error, setError] = useState("");
 
   const [modal, setModal] = useState(null);
+  const navigate = useNavigate();
 
   const loadData = async () => {
     setLoading(true);
@@ -34,8 +37,23 @@ const AdminExams = () => {
         getCourses(),
       ]);
 
-      setExams(examData);
-      setCourses(courseData);
+      const examsWithCounts = await Promise.all(
+        (Array.isArray(examData) ? examData : []).map(async (exam) => {
+          const [questions, results] = await Promise.all([
+            getExamQuestions(exam.id).catch(() => []),
+            getExamResults(exam.id).catch(() => null),
+          ]);
+
+          return {
+            ...exam,
+            questionCount: Array.isArray(questions) ? questions.length : 0,
+            attemptsCount: results?.attemptsCount ?? 0,
+          };
+        }),
+      );
+
+      setExams(examsWithCounts);
+      setCourses(Array.isArray(courseData) ? courseData : []);
     } catch (error) {
       console.error(error);
       setError(error.message);
@@ -112,11 +130,11 @@ const AdminExams = () => {
   };
 
   const handleQuestions = (exam) => {
-    return;
+    navigate(`/admin/exams/${exam.id}/questions`);
   };
 
   const handleResults = (exam) => {
-    return;
+    navigate(`/admin/exams/${exam.id}/results`);
   };
 
   return (

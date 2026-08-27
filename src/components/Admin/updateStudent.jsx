@@ -1,15 +1,15 @@
 import { useState } from "react";
 
-export const UpdateStudent = ({ onSave, onCancel }) => {
+export const UpdateStudent = ({ student, onSave, onCancel }) => {
   const [error, setError] = useState("");
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
 
     const modifiedStudent = {
-      firstName: data.get("firstName").trim(),
-      lastName: data.get("lastName").trim(),
-      email: data.get("email").trim(),
+      firstName: data.get("firstName")?.trim() || "",
+      lastName: data.get("lastName")?.trim() || "",
+      email: data.get("email")?.trim() || "",
     };
     if (
       !modifiedStudent.firstName ||
@@ -20,7 +20,7 @@ export const UpdateStudent = ({ onSave, onCancel }) => {
       return;
     }
     setError("");
-    onSave(modifiedStudent);
+    onSave(student?.id, modifiedStudent);
     
   };
   
@@ -55,6 +55,8 @@ export const UpdateStudent = ({ onSave, onCancel }) => {
                   Prénom
                 </label>
                 <input
+                  name="firstName"
+                  defaultValue={student?.firstName || ""}
                   className="w-full border-[1.5px] border-ink rounded-md bg-cream px-3 py-2 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-sage"
                   placeholder="Amina"
                 />
@@ -64,6 +66,8 @@ export const UpdateStudent = ({ onSave, onCancel }) => {
                   Nom
                 </label>
                 <input
+                  name="lastName"
+                  defaultValue={student?.lastName || ""}
                   className="w-full border-[1.5px] border-ink rounded-md bg-cream px-3 py-2 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-sage"
                   placeholder="Rakotomalala"
                 />
@@ -74,6 +78,8 @@ export const UpdateStudent = ({ onSave, onCancel }) => {
                 Adresse e-mail
               </label>
               <input
+                name="email"
+                defaultValue={student?.email || ""}
                 className="w-full border-[1.5px] border-ink rounded-md bg-cream px-3 py-2 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-sage"
                 placeholder="prenom.nom@etud.mg"
                 type="email"

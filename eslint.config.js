@@ -28,7 +28,6 @@ export default defineConfig([
         beforeEach: 'readonly',
         cy: 'readonly',
         describe: 'readonly',
-        expect: 'readonly',
         it: 'readonly',
       },
     },
@@ -37,12 +36,6 @@ export default defineConfig([
     files: ['cypress.config.js'],
     languageOptions: {
       globals: globals.node,
-    },
-  },
-  {
-    files: ['src/context/AuthContext.jsx'],
-    rules: {
-      'react-refresh/only-export-components': 'off',
     },
   },
 ])

@@ -10,22 +10,19 @@ const AdminStudent = () => {
   const [modal, setModal] = useState(null);
   const [students, SetStudents] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [error, setError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const handleAdd = async (formValues) => {
     const data = await createStudent(formValues);
     setModal(null);
-    SetStudents((currentStudents) => [...currentStudents, data]);
+    if (data) {
+      SetStudents((currentStudents) => [...currentStudents, data]);
+    }
   };
-  const handleUpdate = async (id, student) => {
-    const values = await updateStudent(id,student);
-  }
-
   useEffect(() => {
     const loadStudents = async () => {
       try {
         const data = await getStudents();
-        SetStudents(data);
+        SetStudents(Array.isArray(data) ? data : []);
       } catch (error) {
         console.log(error);
       }
@@ -33,7 +30,7 @@ const AdminStudent = () => {
     loadStudents();
   }, []);
 
-  const filteredStudents = students.filter((student) => {
+  const filteredStudents = students.filter((student) => student && typeof student === "object").filter((student) => {
     const search = searchTerm.trim().toLowerCase();
 
     return (
@@ -48,7 +45,8 @@ const AdminStudent = () => {
     try {
       await updateStudent(id, payload);
       setModal(null);
-      await load();
+      const data = await getStudents();
+      SetStudents(data);
     } finally {
       setSubmitting(false);
     }
@@ -155,10 +153,12 @@ const AdminStudent = () => {
               {filteredStudents.map((student) => {
                 return (
                   <TrStudent
-                    name={student.firstName + " " + student.lastName}
+                    name={`${student.firstName || ""} ${student.lastName || ""}`.trim() || "Student"}
                     status={student.status || null}
                     email={student.email}
                     result={student.result || null}
+                    id={student.id}
+                    onEdit={() => setModal(student)}
                   />
                 );
               })}
@@ -169,12 +169,11 @@ const AdminStudent = () => {
               <StudentForm onSave={handleAdd} onCancel={() => setModal(null)} />
             </Modal>
           )}
-          {modal && modal !== "create" && (
+          {modal && modal !== "add-student" && modal !== "create" && (
                   <Modal title="Edit student" onClose={() => setModal(null)}>
                     <UpdateStudent
                       student={modal}
                       onSave={handleSave}
-                      onDeactivate={handleDeactivate}
                       onCancel={() => setModal(null)}
                       submitting={submitting}
                     />

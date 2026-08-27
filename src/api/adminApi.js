@@ -1,5 +1,9 @@
+<<<<<<< HEAD
 const API_URL = import.meta.env.VITE_API_URL_TEST;
 console.log(API_URL);
+=======
+const API_URL = import.meta.env.VITE_API_URL || "/api";
+>>>>>>> b04890ec5be172860d5be805d1fe46f325dd1d75
 
 const apiRequest = async (endpoint, options = {}) => {
   const token = localStorage.getItem("token");
