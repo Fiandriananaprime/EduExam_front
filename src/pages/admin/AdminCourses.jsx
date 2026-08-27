@@ -91,8 +91,8 @@ const AdminCourses = () => {
         (currentCourse) => currentCourse.id !== course.id,
       ));
       showToast("Course deleted successfully.", "success");
-    } catch (error) {
-      showToast(error.message || "Unable to delete the course.", "error");
+    } catch {
+      showToast("Unable to delete the course.", "error");
     }
   };
 
