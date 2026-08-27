@@ -1,7 +1,12 @@
 import { Modal } from "../../components/Admin/Modal";
 import { StudentForm } from "../../components/Admin/StudentForm";
 import { useEffect, useState } from "react";
-import { createStudent, getStudents, updateStudent } from "../../api/adminApi";
+import {
+  createStudent,
+  getStudents,
+  updateStudent,
+  deleteStudent,
+} from "../../api/adminApi";
 import { TrStudent } from "../../components/Admin/TrStudents";
 import { UpdateStudent } from "../../components/Admin/updateStudent";
 
@@ -51,6 +56,17 @@ const AdminStudent = () => {
     } finally {
       setSubmitting(false);
     }
+  };
+  const handleDeactivate = async (student) => {
+    const confirmed = window.confirm(
+      `Deactivate student "${student.firstName} ${student.lastName}"?`,
+    );
+
+    if (!confirmed) return;
+
+    await deleteStudent(student.id);
+    const data = await getStudents();
+    SetStudents(Array.isArray(data) ? data : []);
   };
   return (
     <>
@@ -156,6 +172,7 @@ const AdminStudent = () => {
                     email={student.email}
                     id={student.id}
                     onEdit={() => setModal(student)}
+                    onDeactivate={() => handleDeactivate(student)}
                   />
                 );
               })}
