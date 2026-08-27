@@ -157,6 +157,9 @@ const AdminStudent = () => {
             <thead>
               <tr class="border-b border-rule bg-cream/50">
                 <th class="text-left px-5 py-3 font-mono text-xs uppercase tracking-wider text-taupe">
+                  ID
+                </th>
+                <th class="text-left px-5 py-3 font-mono text-xs uppercase tracking-wider text-taupe">
                   Nom
                 </th>
                 <th class="text-left px-5 py-3 font-mono text-xs uppercase tracking-wider text-taupe">

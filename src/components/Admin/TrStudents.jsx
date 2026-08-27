@@ -50,6 +50,7 @@ export const TrStudent = ({ name, email, status, id, onEdit, onDeactivate }) => 
   if (status === "DISACTIVATED") {
     return (
       <tr className="px-5 py-3 opacity-60" key={id}>
+        <td className="px-5 py-3 font-mono text-xs text-taupe">{id}</td>
         <td className="px-5 py-3 flex items-center gap-2">
           <div class="w-8 h-8 rounded-full bg-gold/50 border border-ink/20 flex items-center justify-center font-serif font-bold text-xs text-ink shrink-0">
             {name?.[0] || "?"}
@@ -74,6 +75,7 @@ export const TrStudent = ({ name, email, status, id, onEdit, onDeactivate }) => 
   }
   return (
     <tr className="px-5 py-3" key={id}>
+      <td className="px-5 py-3 font-mono text-xs text-taupe">{id}</td>
       <td className="px-5 py-3 flex items-center gap-2">
         <div class="w-8 h-8 rounded-full bg-gold/50 border border-ink/20 flex items-center justify-center font-serif font-bold text-xs text-ink shrink-0">
           {name?.[0] || "?"}
