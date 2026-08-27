@@ -3,7 +3,7 @@ describe('Student Results & History', () => {
     cy.loginAsStudent();
     cy.window().then((window) => {
       window.localStorage.setItem('user', JSON.stringify({
-        id: 3,
+        id: 'STD25003',
         firstName: 'Marie',
         lastName: 'Curie',
         role: 'STUDENT'
@@ -14,17 +14,31 @@ describe('Student Results & History', () => {
       statusCode: 200,
       body: [
         {
-          id: 1,
-          examId: 2,
+          id: '1',
+          examId: '2',
           examTitle: 'QCM Reseaux - Adressage IP',
           courseCode: 'RES1',
-          studentId: 3,
+          studentId: 'STD25003',
           score: 1,
           maxScore: 2,
           submittedAt: '2026-08-17T14:45:54.977Z',
-          answers: [
-            { questionId: 4, choiceId: 11 },
-            { questionId: 5, choiceId: 15 }
+          corrections: [
+            {
+              questionId: '4',
+              statement: 'Combien d\'hotes sur un /24 (hors reseau et broadcast) ?',
+              selectedChoiceId: '11',
+              correctChoiceId: '11',
+              isCorrect: true,
+              pointsEarned: 1
+            },
+            {
+              questionId: '5',
+              statement: "Quelle classe d'adresse est 10.0.0.0/8 ?",
+              selectedChoiceId: '15',
+              correctChoiceId: '14',
+              isCorrect: false,
+              pointsEarned: 0
+            }
           ]
         }
       ]

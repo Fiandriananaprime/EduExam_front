@@ -1,14 +1,84 @@
 import { Modal } from "../../components/Admin/Modal";
 import { StudentForm } from "../../components/Admin/StudentForm";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import {
+  createStudent,
+  getStudents,
+  updateStudent,
+  deleteStudent,
+} from "../../api/adminApi";
+import { TrStudent } from "../../components/Admin/TrStudents";
+import { UpdateStudent } from "../../components/Admin/updateStudent";
+
 
 const AdminStudent = () => {
   const [modal, setModal] = useState(null);
-  const handleAdd = ()=> {
-    console.log("Student should be created");
+  const [students, SetStudents] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("ALL");
+  const [submitting, setSubmitting] = useState(false);
+  const handleAdd = async (formValues) => {
+    const data = await createStudent(formValues);
     setModal(null);
-  }
+    if (data) {
+      SetStudents((currentStudents) => [...currentStudents, data]);
+    }
+  };
+  useEffect(() => {
+    const loadStudents = async () => {
+      try {
+        const data = await getStudents();
+        SetStudents(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    loadStudents();
+  }, []);
 
+  const filteredStudents = students
+    .filter((student) => student && typeof student === "object")
+    .filter((student) => {
+      const search = searchTerm.trim().toLowerCase();
+      const status = student.isActive ? "ACTIVE" : "DISACTIVATED";
+      const matchesStatus = statusFilter === "ALL" || status === statusFilter;
+
+      return matchesStatus && (
+        !search ||
+        student.firstName?.toLowerCase().includes(search) ||
+        student.lastName?.toLowerCase().includes(search) ||
+        student.email?.toLowerCase().includes(search)
+      );
+    })
+    .sort((firstStudent, secondStudent) => {
+      if (statusFilter === "ALL" && firstStudent.isActive !== secondStudent.isActive) {
+        return firstStudent.isActive ? -1 : 1;
+      }
+
+      return new Date(secondStudent.createdAt || 0) - new Date(firstStudent.createdAt || 0);
+    });
+  const handleSave = async (id, payload) => {
+    setSubmitting(true);
+    try {
+      await updateStudent(id, payload);
+      setModal(null);
+      const data = await getStudents();
+      SetStudents(Array.isArray(data) ? data : []);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+  const handleDeactivate = async (student) => {
+    const confirmed = window.confirm(
+      `Deactivate student "${student.firstName} ${student.lastName}"?`,
+    );
+
+    if (!confirmed) return;
+
+    await deleteStudent(student.id);
+    const data = await getStudents();
+    SetStudents(Array.isArray(data) ? data : []);
+  };
   return (
     <>
       <section>
@@ -18,10 +88,13 @@ const AdminStudent = () => {
               Students
             </p>
             <p className="text-sm text-taupe mt-1 font-mono">
-              X Comptes enregistrés
+              {students.length} Created accounts
             </p>
           </div>
-          <button className="flex items-center gap-2 px-4 py-2.5 bg-ink text-cream rounded-lg text-sm font-medium hover:bg-ink/80 transition-colors" onClick={() => setModal("add-student")}>
+          <button
+            className="flex items-center gap-2 px-4 py-2.5 bg-ink text-cream rounded-lg text-sm font-medium hover:bg-ink/80 transition-colors"
+            onClick={() => setModal("add-student")}
+          >
             Add new student
           </button>
         </div>
@@ -49,20 +122,30 @@ const AdminStudent = () => {
               ></path>
             </svg>
             <input
-              placeholder="Rechercher un étudiant…"
+              placeholder="Search for a Student…"
               class="w-full pl-9 pr-4 py-2.5 bg-paper border-[1.5px] border-ink/30 rounded-lg text-sm text-ink placeholder-taupe focus:outline-none focus:ring-2 focus:ring-sage focus:border-transparent"
               type="search"
-              value=""
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
           <div class="flex gap-2">
-            <button class="px-3 py-2 rounded-lg text-xs font-mono uppercase tracking-wider transition-colors bg-paper border border-ink/30 text-taupe hover:border-ink hover:text-ink">
+            <button
+              class={`px-3 py-2 rounded-lg text-xs font-mono uppercase tracking-wider transition-colors ${statusFilter === "ALL" ? "bg-ink text-cream" : "bg-paper border border-ink/30 text-taupe hover:border-ink hover:text-ink"}`}
+              onClick={() => setStatusFilter("ALL")}
+            >
               All
             </button>
-            <button class="px-3 py-2 rounded-lg text-xs font-mono uppercase tracking-wider transition-colors bg-ink text-cream">
+            <button
+              class={`px-3 py-2 rounded-lg text-xs font-mono uppercase tracking-wider transition-colors ${statusFilter === "ACTIVE" ? "bg-ink text-cream" : "bg-paper border border-ink/30 text-taupe hover:border-ink hover:text-ink"}`}
+              onClick={() => setStatusFilter("ACTIVE")}
+            >
               Actives
             </button>
-            <button class="px-3 py-2 rounded-lg text-xs font-mono uppercase tracking-wider transition-colors bg-paper border border-ink/30 text-taupe hover:border-ink hover:text-ink">
+            <button
+              class={`px-3 py-2 rounded-lg text-xs font-mono uppercase tracking-wider transition-colors ${statusFilter === "DISACTIVATED" ? "bg-ink text-cream" : "bg-paper border border-ink/30 text-taupe hover:border-ink hover:text-ink"}`}
+              onClick={() => setStatusFilter("DISACTIVATED")}
+            >
               Disactivated
             </button>
           </div>
@@ -74,6 +157,9 @@ const AdminStudent = () => {
             <thead>
               <tr class="border-b border-rule bg-cream/50">
                 <th class="text-left px-5 py-3 font-mono text-xs uppercase tracking-wider text-taupe">
+                  ID
+                </th>
+                <th class="text-left px-5 py-3 font-mono text-xs uppercase tracking-wider text-taupe">
                   Nom
                 </th>
                 <th class="text-left px-5 py-3 font-mono text-xs uppercase tracking-wider text-taupe">
@@ -82,31 +168,41 @@ const AdminStudent = () => {
                 <th class="text-left px-5 py-3 font-mono text-xs uppercase tracking-wider text-taupe">
                   Statut
                 </th>
-                <th class="text-left px-5 py-3 font-mono text-xs uppercase tracking-wider text-taupe">
-                  Résultats
-                </th>
                 <th class="text-right px-5 py-3 font-mono text-xs uppercase tracking-wider text-taupe">
                   Actions
                 </th>
               </tr>
             </thead>
             <tbody className="list_students_display">
-              
+              {filteredStudents.map((student) => {
+                return (
+                  <TrStudent
+                    name={`${student.firstName || ""} ${student.lastName || ""}`.trim() || "Student"}
+                    status={student.isActive ? "ACTIVE" : "DISACTIVATED"}
+                    email={student.email}
+                    id={student.id}
+                    onEdit={() => setModal(student)}
+                    onDeactivate={() => handleDeactivate(student)}
+                  />
+                );
+              })}
             </tbody>
-               {modal === "add-student" && (
-        <Modal
-          title="Add a student"
-          onClose={() => setModal(null)}
-        >
-
-          <StudentForm
-            onSave={handleAdd}
-            onCancel={() => setModal(null)}
-          />
-
-        </Modal>
-      )}
           </table>
+          {modal === "add-student" && (
+            <Modal title="Add a student" onClose={() => setModal(null)}>
+              <StudentForm onSave={handleAdd} onCancel={() => setModal(null)} />
+            </Modal>
+          )}
+          {modal && modal !== "add-student" && modal !== "create" && (
+                  <Modal title="Edit student" onClose={() => setModal(null)}>
+                    <UpdateStudent
+                      student={modal}
+                      onSave={handleSave}
+                      onCancel={() => setModal(null)}
+                      submitting={submitting}
+                    />
+                  </Modal>
+                )}
         </div>
       </div>
     </>

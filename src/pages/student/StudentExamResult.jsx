@@ -21,7 +21,6 @@ const StudentResultPage = () => {
     location.state?.examResult || location.state?.result || null
   );
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchResultData = async () => {
@@ -42,7 +41,6 @@ const StudentResultPage = () => {
         }
 
       } catch (err) {
-        setError(err.message || "Failed to load result data");
         showToast(err.message || 'Failed to load result data', 'error');
       } finally {
         setLoading(false);
@@ -52,14 +50,10 @@ const StudentResultPage = () => {
     if (examId) {
       fetchResultData();
     }
-  }, [examId, showToast]);
+  }, [exam, examId, examResult, showToast]);
 
   if (loading) {
     return <div className="p-8 text-center text-taupe font-mono animate-pulse">Loading results...</div>;
-  }
-
-  if (error) {
-    return <div className="p-8 text-center text-danger font-mono">Error: {error}</div>;
   }
 
   if (!exam || !examResult) {
@@ -74,7 +68,10 @@ const StudentResultPage = () => {
     );
   }
 
-  const pct = Math.round((examResult.score / examResult.maxScore) * 100);
+  const score = Number(examResult.score) || 0;
+  const maxScore = Number(examResult.maxScore);
+  const hasMaxScore = Number.isFinite(maxScore) && maxScore > 0;
+  const pct = hasMaxScore ? Math.round((score / maxScore) * 100) : 0;
   const corrections = examResult.corrections || [];
   const correctCount = corrections.filter(c => c.isCorrect).length;
   const incorrectCount = corrections.filter(
@@ -103,7 +100,7 @@ const StudentResultPage = () => {
         <div className="relative">
           <div className="font-mono text-xs text-taupe uppercase tracking-widest mb-2">Your score</div>
           <div className="font-serif text-7xl font-bold text-ink mb-1">
-            {examResult.score}<span className="text-3xl font-medium text-taupe">/{examResult.maxScore}</span>
+            {score}<span className="text-3xl font-medium text-taupe">/{hasMaxScore ? maxScore : '—'}</span>
           </div>
           <div className={`font-mono text-2xl font-bold mb-4 ${pct >= 50 ? 'text-sage' : 'text-danger'}`}>{pct}%</div>
 
@@ -138,19 +135,15 @@ const StudentResultPage = () => {
             const choices = question?.choices || correction.choices || [];
             const selectedId = correction.selectedChoiceId;
             const correctId = correction.correctChoiceId;
-            const selectedChoice = choices.find(
-              choice => String(choice.id) === String(selectedId)
-            );
-            const correctChoice = choices.find(
-              choice => String(choice.id) === String(correctId)
-            );
+
             const isCorrect = correction.isCorrect;
             const isUnanswered = selectedId == null;
 
-            let cardCls = 'border-ink/20';
-            if (isCorrect) cardCls = 'border-sage/40 bg-sage/5';
-            else if (isUnanswered) cardCls = 'border-gold/50 bg-gold/5';
-            else cardCls = 'border-danger/30 bg-danger/5';
+            const cardCls = isCorrect
+              ? 'border-sage/40 bg-sage/5'
+              : isUnanswered
+                ? 'border-gold/50 bg-gold/5'
+                : 'border-danger/30 bg-danger/5';
 
             return (
               <div key={correction.questionId} className={`bg-paper border-2 rounded-xl p-5 ${cardCls}`}>
@@ -178,16 +171,11 @@ const StudentResultPage = () => {
                     const isTheCorrectChoice = String(choice.id) === String(correctId);
                     const isTheSelectedChoice = String(choice.id) === String(selectedId);
                     
-                    let choiceStyles = "border-rule text-taupe bg-paper";
-
-                    if (isTheCorrectChoice) {
-                      choiceStyles = "border-sage bg-sage/10 text-sage font-medium";
-                    } else if (isTheSelectedChoice && !isCorrect) {
-                      choiceStyles = "border-danger bg-danger/10 text-danger font-medium";
-                    } else {
-                      
-                      choiceStyles = "border-rule text-taupe/70 bg-paper/50";
-                    }
+                    const choiceStyles = isTheCorrectChoice
+                      ? "border-sage bg-sage/10 text-sage font-medium"
+                      : isTheSelectedChoice && !isCorrect
+                        ? "border-danger bg-danger/10 text-danger font-medium"
+                        : "border-rule text-taupe/70 bg-paper/50";
 
                     return (
                       <div 

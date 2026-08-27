@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/useAuth";
 import { loginRequest } from "../api/authApi";
 import { useToast } from "../context/ToastContext";
 const Login = () =>  {
@@ -26,11 +26,13 @@ const Login = () =>  {
 
         if (data.user.role === "STUDENT") {
         navigate("/student");
+        
         } else if (data.user.role === "ADMIN") {
         navigate("/admin");
         }
 
-        showToast(`Welcome ${data.user.firstName}` , 'success')
+        const displayName = data.user.name || data.user.firstName || data.user.email || "there";
+        showToast(`Welcome ${displayName}`, "success");
     } catch (error) {
       showToast(error.message || 'An error occurred', 'error')
     } finally {

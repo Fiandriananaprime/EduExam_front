@@ -5,15 +5,15 @@ describe('Student Exam List', () => {
     cy.intercept('GET', '**/api/my/exams', {
       statusCode: 200,
       body: [
-        { id: 1, title: 'Algorithms & Data Structures', startDate: '2026-08-20T08:00:00Z', endDate: '2026-08-20T09:00:00Z' },
-        { id: 2, title: 'Database Management Systems', startDate: '2026-08-21T08:00:00Z', endDate: '2026-08-21T09:00:00Z' }
+        { id: '1', courseId: '1', courseCode: 'PROG2', title: 'Algorithms & Data Structures', startDate: '2026-08-20T08:00:00Z', endDate: '2026-08-20T09:00:00Z' },
+        { id: '2', courseId: '2', courseCode: 'RES1', title: 'Database Management Systems', startDate: '2026-08-21T08:00:00Z', endDate: '2026-08-21T09:00:00Z' }
       ]
     }).as('getExams');
 
     cy.intercept('GET', '**/api/my/results', {
       statusCode: 200,
       body: [
-        { examId: 2, examTitle: 'Database Management Systems', score: 16, maxScore: 20, submittedAt: '2026-08-22T10:00:00Z' }
+        { examId: '2', examTitle: 'Database Management Systems', score: 16, maxScore: 20, submittedAt: '2026-08-22T10:00:00Z' }
       ]
     }).as('getResults');
 
