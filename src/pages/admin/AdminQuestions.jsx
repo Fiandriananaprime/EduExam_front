@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Pencil } from "lucide-react";
 import { getExamQuestions, updateQuestion } from "../../api/adminApi";
-import { EditQuestionModal } from "../../components/Admin/QuestionForm";
+import  EditQuestionModal  from "../../components/Admin/QuestionForm";
 
 const AdminQuestions = () => {
     const { id } = useParams();

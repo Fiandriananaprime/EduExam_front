@@ -26,13 +26,16 @@ const QuestionForm = ({ question, saving, onSave, onClose }) => {
 
     return (
         <Modal
-            title="Modifier la question"
+            title="Modify question"
             onClose={() => !saving && onClose()}
         >
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form 
+                onSubmit={handleSubmit} 
+                className="flex max-h-[80vh] w-full max-w-2xl flex-col space-y-5 px-1"
+            >
                 <div>
                     <label className="mb-2 block font-mono text-xs uppercase tracking-widest text-taupe">
-                        Énoncé
+                        Statement
                     </label>
                     <textarea
                         value={editingQuestion.statement}
@@ -63,9 +66,9 @@ const QuestionForm = ({ question, saving, onSave, onClose }) => {
                 </div>
                 <div>
                     <p className="mb-2 font-mono text-xs uppercase tracking-widest text-taupe">Choix</p>
-                    <div className="space-y-3">
+                    <div className="max-h-60 space-y-3 overflow-y-auto pr-2">
                         {editingQuestion.choices.map((choice, choiceIndex) => (
-                            <div key={choiceIndex} className="flex items-center gap-3">
+                            <div key={choiceIndex} className="flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:gap-3">
                                 <input
                                     type="text"
                                     value={choice.text}
@@ -106,18 +109,19 @@ const QuestionForm = ({ question, saving, onSave, onClose }) => {
                         disabled={saving}
                         className="rounded-lg border border-ink/30 px-5 py-3 text-ink hover:bg-ink/10 disabled:opacity-50"
                     >
-                        Annuler
+                        Cancel
                     </button>
                     <button
                         type="submit"
                         disabled={saving}
                         className="rounded-lg bg-ink px-5 py-3 font-medium text-white hover:bg-ink/80 disabled:opacity-50"
                     >
-                        {saving ? "Enregistrement..." : "Enregistrer"}
+                        {saving ? "Saving..." : "Save"}
                     </button>
                 </div>
             </form>
         </Modal>
     );
 };
+
 export default QuestionForm;
