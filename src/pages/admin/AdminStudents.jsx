@@ -15,6 +15,7 @@ const AdminStudent = () => {
   const [modal, setModal] = useState(null);
   const [students, SetStudents] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("ALL");
   const [submitting, setSubmitting] = useState(false);
   const handleAdd = async (formValues) => {
     const data = await createStudent(formValues);
@@ -35,17 +36,27 @@ const AdminStudent = () => {
     loadStudents();
   }, []);
 
-  const filteredStudents = students.filter((student) => student && typeof student === "object").filter((student) => {
-    const search = searchTerm.trim().toLowerCase();
-    const status = student.isActive ? "active" : "disactivated";
+  const filteredStudents = students
+    .filter((student) => student && typeof student === "object")
+    .filter((student) => {
+      const search = searchTerm.trim().toLowerCase();
+      const status = student.isActive ? "ACTIVE" : "DISACTIVATED";
+      const matchesStatus = statusFilter === "ALL" || status === statusFilter;
 
-    return (
-      student.firstName?.toLowerCase().includes(search) ||
-      student.lastName?.toLowerCase().includes(search) ||
-      student.email?.toLowerCase().includes(search) ||
-      status.includes(search)
-    );
-  });
+      return matchesStatus && (
+        !search ||
+        student.firstName?.toLowerCase().includes(search) ||
+        student.lastName?.toLowerCase().includes(search) ||
+        student.email?.toLowerCase().includes(search)
+      );
+    })
+    .sort((firstStudent, secondStudent) => {
+      if (statusFilter === "ALL" && firstStudent.isActive !== secondStudent.isActive) {
+        return firstStudent.isActive ? -1 : 1;
+      }
+
+      return new Date(secondStudent.createdAt || 0) - new Date(firstStudent.createdAt || 0);
+    });
   const handleSave = async (id, payload) => {
     setSubmitting(true);
     try {
@@ -120,24 +131,20 @@ const AdminStudent = () => {
           </div>
           <div class="flex gap-2">
             <button
-              class="px-3 py-2 rounded-lg text-xs font-mono uppercase tracking-wider transition-colors bg-paper border border-ink/30 text-taupe hover:border-ink hover:text-ink"
-              onClick={() => {
-                setSearchTerm("");
-              }}
+              class={`px-3 py-2 rounded-lg text-xs font-mono uppercase tracking-wider transition-colors ${statusFilter === "ALL" ? "bg-ink text-cream" : "bg-paper border border-ink/30 text-taupe hover:border-ink hover:text-ink"}`}
+              onClick={() => setStatusFilter("ALL")}
             >
               All
             </button>
             <button
-              class="px-3 py-2 rounded-lg text-xs font-mono uppercase tracking-wider transition-colors bg-ink text-cream"
-              onClick={() => setSearchTerm("ACTIVE")}
+              class={`px-3 py-2 rounded-lg text-xs font-mono uppercase tracking-wider transition-colors ${statusFilter === "ACTIVE" ? "bg-ink text-cream" : "bg-paper border border-ink/30 text-taupe hover:border-ink hover:text-ink"}`}
+              onClick={() => setStatusFilter("ACTIVE")}
             >
               Actives
             </button>
             <button
-              class="px-3 py-2 rounded-lg text-xs font-mono uppercase tracking-wider transition-colors bg-paper border border-ink/30 text-taupe hover:border-ink hover:text-ink"
-              onClick={() => {
-                setSearchTerm("DISACTIVATED");
-              }}
+              class={`px-3 py-2 rounded-lg text-xs font-mono uppercase tracking-wider transition-colors ${statusFilter === "DISACTIVATED" ? "bg-ink text-cream" : "bg-paper border border-ink/30 text-taupe hover:border-ink hover:text-ink"}`}
+              onClick={() => setStatusFilter("DISACTIVATED")}
             >
               Disactivated
             </button>

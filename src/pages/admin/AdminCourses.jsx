@@ -90,7 +90,7 @@ const AdminCourses = () => {
     <div className="p-6 lg:p-8 max-w-7xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 class="font-serif text-2xl font-semibold text-ink">Cours</h1>
+            <h1 class="font-serif text-2xl font-semibold text-ink">Courses</h1>
           <p class="text-sm text-taupe mt-1 font-mono">{courses.length} created courses</p>
         </div>
         <CreateButton onClick={handleOpenCreateModal} purpose={"Create courses"} />
@@ -111,7 +111,7 @@ const AdminCourses = () => {
         ))}
       </div>
       {modal === "create-course" && (
-        <Modal title="Créer un cours" onClose={handleCloseModal}>
+        <Modal title="Create course" onClose={handleCloseModal}>
           <CourseForm
             onSave={handleCreateCourse}
             onCancel={handleCloseModal}
@@ -119,7 +119,7 @@ const AdminCourses = () => {
         </Modal>
       )}
       {modal === "edit-course" && selectedCourse && (
-        <Modal title="Modifier un cours" onClose={handleCloseModal}>
+        <Modal title="Edit course" onClose={handleCloseModal}>
           <CourseForm
             course={selectedCourse}
             onSave={handleUpdateCourse}

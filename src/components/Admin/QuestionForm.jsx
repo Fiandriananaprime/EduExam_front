@@ -66,7 +66,7 @@ const QuestionForm = ({ question, saving, onSave, onClose }) => {
                 </div>
                 <div>
                     <p className="mb-2 font-mono text-xs uppercase tracking-widest text-taupe">Choix</p>
-                    <div className="max-h-60 space-y-3 overflow-y-auto pr-2">
+                        <div className="max-h-60 space-y-3 overflow-y-auto pr-2">
                         {editingQuestion.choices.map((choice, choiceIndex) => (
                             <div key={choiceIndex} className="flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:gap-3">
                                 <input

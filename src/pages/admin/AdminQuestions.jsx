@@ -61,8 +61,8 @@ const AdminQuestions = () => {
                                     setEditingQuestion(question);
                                     setError("");
                                 }}
-                                aria-label={`Modifier la question ${index + 1}`}
-                                title="Modifier la question"
+                                aria-label={`Edit question ${index + 1}`}
+                                title="Edit question"
                                 className="rounded-md border border-ink/30 p-2 text-ink transition-colors hover:bg-ink hover:text-cream"
                             >
                                 <Pencil className="h-4 w-4" aria-hidden="true" />

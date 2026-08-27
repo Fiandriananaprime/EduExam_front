@@ -79,14 +79,14 @@ export const CourseForm = ({ course, onSave, onCancel }) => {
           onClick={onCancel}
           className="rounded-lg border border-[#403D08]/30 px-5 py-3 text-[#403D08] hover:bg-[#403D08]/10"
         >
-          Annuler
+          Cancel
         </button>
 
         <button
           type="submit"
           className="rounded-lg bg-[#403D08] px-5 py-3 font-medium text-white hover:bg-[#514D0A]"
         >
-          Créer le cours
+          Create course
         </button>
 
       </div>
