@@ -3,17 +3,17 @@ import { useParams } from "react-router-dom";
 import { Pencil } from "lucide-react";
 import { getExamQuestions, updateQuestion } from "../../api/adminApi";
 import  EditQuestionModal  from "../../components/Admin/QuestionForm";
+import { useToast } from "../../context/ToastContext";
 
 const AdminQuestions = () => {
     const { id } = useParams();
     const [questions, setQuestions] = useState([]);
-    const [error, setError] = useState("");
     const [editingQuestion, setEditingQuestion] = useState(null);
     const [saving, setSaving] = useState(false);
+    const { showToast } = useToast();
 
     const handleSave = async (payload) => {
         setSaving(true);
-        setError("");
 
         try {
             const updatedQuestion = await updateQuestion(payload.id, {
@@ -29,7 +29,7 @@ const AdminQuestions = () => {
             );
             setEditingQuestion(null);
         } catch (err) {
-            setError(err.message || "Unable to update the question.");
+            showToast(err.message || "Unable to update the question.", "error");
         } finally {
             setSaving(false);
         }
@@ -38,8 +38,8 @@ const AdminQuestions = () => {
     useEffect(() => {
         getExamQuestions(id)
             .then((data) => setQuestions(Array.isArray(data) ? data : []))
-            .catch((err) => setError(err.message));
-    }, [id]);
+            .catch((err) => showToast(err.message, "error"));
+    }, [id, showToast]);
 
     return (
         <section className="space-y-6">
@@ -49,7 +49,6 @@ const AdminQuestions = () => {
                     {questions.length} question(s)
                 </p>
             </div>
-            {error && <p className="rounded-lg bg-red-100 px-4 py-3 text-sm text-red-700">{error}</p>}
             <div className="space-y-3">
                 {questions.map((question, index) => (
                     <article key={question.id} className="rounded-xl border-2 border-ink/20 bg-paper p-5">
@@ -59,7 +58,6 @@ const AdminQuestions = () => {
                                 type="button"
                                 onClick={() => {
                                     setEditingQuestion(question);
-                                    setError("");
                                 }}
                                 aria-label={`Edit question ${index + 1}`}
                                 title="Edit question"

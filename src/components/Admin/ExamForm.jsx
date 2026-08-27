@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useToast } from "../../context/ToastContext";
 
 export const ExamForm = ({
   exam,
@@ -15,7 +16,7 @@ export const ExamForm = ({
     endsAt: "",
   });
 
-  const [error, setError] = useState("");
+  const { showToast } = useToast();
 
   useEffect(() => {
     if (exam) {
@@ -54,15 +55,13 @@ export const ExamForm = ({
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    setError("");
-
     if (
       !form.courseId ||
       !form.title.trim() ||
       !form.startsAt ||
       !form.endsAt
     ) {
-      setError("Please fill in all required fields.");
+      showToast("Please fill in all required fields.", "error");
       return;
     }
 
@@ -70,8 +69,9 @@ export const ExamForm = ({
     const end = new Date(form.endsAt);
 
     if (end <= start) {
-      setError(
+      showToast(
         "The closing time must be after the opening time."
+        , "error"
       );
       return;
     }
@@ -85,18 +85,13 @@ export const ExamForm = ({
         endDate: end.toISOString(),
       });
     } catch (error) {
-      setError(error.message);
+      showToast(error.message, "error");
     }
   };
 
   return (
     <form onSubmit={handleSubmit}>
 
-      {error && (
-        <p className="mb-5 rounded-lg bg-red-100 px-4 py-3 text-sm text-red-700">
-          {error}
-        </p>
-      )}
 
       <div className="flex flex-col gap-5">
 

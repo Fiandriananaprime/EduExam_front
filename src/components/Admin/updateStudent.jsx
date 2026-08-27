@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useToast } from "../../context/ToastContext";
 
 export const UpdateStudent = ({ student, onSave, onCancel }) => {
-  const [error, setError] = useState("");
+  const { showToast } = useToast();
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -16,21 +16,15 @@ export const UpdateStudent = ({ student, onSave, onCancel }) => {
       !modifiedStudent.lastName ||
       !modifiedStudent.email
     ) {
-      setError("Please fill in all fields.");
+      showToast("Please fill in all fields.", "error");
       return;
     }
-    setError("");
     onSave(student?.id, modifiedStudent);
     
   };
   
   return (
     <form onSubmit={handleSubmit}>
-      {error && (
-        <p className="mb-5 rounded-lg bg-red-100 px-4 py-3 text-sm text-red-700">
-          {error}
-        </p>
-      )}
       <div className="relative">
         <div className="flex items-center justify-between px-6 py-4 border-b border-rule">
           <h2 className="font-serif text-lg font-semibold text-ink">
