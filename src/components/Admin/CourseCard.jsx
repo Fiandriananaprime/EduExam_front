@@ -6,19 +6,21 @@ export const CourseCard = ({
   onDelete,
 }) => {
   return (
-    <article className="flex w-full items-center justify-between rounded-2xl border-2 border-ink/20 bg-paper px-6 py-5">
+    <article className="flex w-full items-center justify-between rounded-xl border-2 border-ink/20 bg-paper px-6 py-5 shadow-sm transition-shadow hover:shadow-md">
 
       <div className="min-w-0 flex-1">
 
         <div className="flex items-center gap-2">
 
           <h2 className="font-serif text-xl font-semibold text-ink">
-            {course.title}
+            {course.name || course.title || "Untitled course"}
           </h2>
 
-          <span className="rounded-md bg-sage/20 px-2.5 py-1 font-mono text-xs text-taupe">
-            {course.status}
-          </span>
+          {course.code && (
+            <span className="rounded-md bg-cream px-2.5 py-1 font-mono text-xs text-taupe">
+              {course.code}
+            </span>
+          )}
 
           <span className="rounded-md bg-cream px-2.5 py-1 font-mono text-xs text-ink">
             {course.examCount ?? 0} exams
@@ -39,7 +41,7 @@ export const CourseCard = ({
           onClick={() => onEdit(course)}
           aria-label="Modify course"
           title="Modify course"
-          className="rounded-md border border-ink/30 px-4 py-2 font-mono text-sm text-ink hover:bg-ink/10"
+          className="rounded-md border border-ink/30 p-2 text-ink hover:bg-ink/10"
         >
           <Pencil className="h-4 w-4" aria-hidden="true" />
         </button>
@@ -49,7 +51,7 @@ export const CourseCard = ({
           onClick={() => onDelete(course)}
           aria-label="Delete course"
           title="Delete course"
-          className="rounded-md border border-danger/20 px-4 py-2 font-mono text-sm text-taupe hover:border-danger hover:text-danger"
+          className="rounded-md border border-danger/20 p-2 text-taupe hover:border-danger hover:text-danger"
         >
           <Trash2 className="h-4 w-4" aria-hidden="true" />
         </button>

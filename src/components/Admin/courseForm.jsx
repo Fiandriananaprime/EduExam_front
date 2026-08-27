@@ -2,22 +2,23 @@ import { useState } from "react";
 import { useToast } from "../../context/ToastContext";
 
 export const CourseForm = ({ course, onSave, onCancel }) => {
-  const [title, setTitle] = useState(course?.title || "");
+  const [name, setName] = useState(course?.name || course?.title || "");
+  const [code, setCode] = useState(course?.code || "");
   const [description, setDescription] = useState(course?.description || "");
   const { showToast } = useToast();
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    if (!title.trim() || !description.trim()) {
+    if (!name.trim() || !code.trim() || !description.trim()) {
       showToast("Please fill in all fields.", "error");
       return;
     }
 
     const course = {
-      title: title.trim(),
+      name: name.trim(),
+      code: code.trim(),
       description: description.trim(),
-      status: "ACTIVE",
     };
 
     onSave(course);
@@ -29,19 +30,37 @@ export const CourseForm = ({ course, onSave, onCancel }) => {
 
       <div className="mb-6 flex flex-col gap-2">
         <label
-          htmlFor="course-title"
+          htmlFor="course-name"
           className="text-xs font-medium tracking-widest text-[#403D08]"
         >
           COURSE TITLE
         </label>
 
         <input
-          id="course-title"
-          name="title"
+          id="course-name"
+          name="name"
           type="text"
           placeholder="ex. Algorithmique"
-          value={title}
-          onChange={(event) => setTitle(event.target.value)}
+          value={name}
+          onChange={(event) => setName(event.target.value)}
+          className="rounded-lg border border-[#403D08]/50 bg-[#F0F0D0] px-4 py-3 text-[#403D08] outline-none focus:border-[#403D08]"
+        />
+      </div>
+
+      <div className="mb-6 flex flex-col gap-2">
+        <label
+          htmlFor="course-code"
+          className="text-xs font-medium tracking-widest text-[#403D08]"
+        >
+          COURSE CODE
+        </label>
+        <input
+          id="course-code"
+          name="code"
+          type="text"
+          placeholder="ex. PROG2"
+          value={code}
+          onChange={(event) => setCode(event.target.value)}
           className="rounded-lg border border-[#403D08]/50 bg-[#F0F0D0] px-4 py-3 text-[#403D08] outline-none focus:border-[#403D08]"
         />
       </div>
