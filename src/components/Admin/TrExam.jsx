@@ -1,3 +1,5 @@
+import { Pencil, Trash2 } from "lucide-react";
+
 const getExamStatus = (startDate, endDate) => {
   const now = new Date();
   const start = new Date(startDate);
@@ -104,9 +106,11 @@ export const TrExam = ({
           <button
             type="button"
             onClick={() => onEdit(exam)}
+            aria-label="Edit exam"
+            title="Edit exam"
             className="rounded-md border border-ink/30 px-3 py-1.5 font-mono text-xs text-ink transition-colors hover:bg-ink hover:text-cream"
           >
-            Edit
+            <Pencil className="h-4 w-4" aria-hidden="true" />
           </button>
 
           <button
@@ -128,9 +132,11 @@ export const TrExam = ({
           <button
             type="button"
             onClick={() => onDelete(exam)}
+            aria-label="Delete exam"
+            title="Delete exam"
             className="rounded-md border border-danger/30 px-3 py-1.5 font-mono text-xs text-danger transition-colors hover:bg-danger hover:text-white"
           >
-            Delete
+            <Trash2 className="h-4 w-4" aria-hidden="true" />
           </button>
 
         </div>

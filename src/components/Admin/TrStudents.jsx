@@ -1,14 +1,22 @@
+import { Pencil, UserX } from "lucide-react";
+
 const EnabledStudentsAction = ({ onEdit }) => {
   return (
     <div class="flex items-center justify-end gap-2">
       <button
         class="text-xs px-3 py-1.5 border border-ink/30 rounded text-ink hover:bg-ink hover:text-cream transition-colors font-mono"
         onClick={onEdit}
+        aria-label="Modify student"
+        title="Modify student"
       >
-        Modifier
+        <Pencil className="h-4 w-4" aria-hidden="true" />
       </button>
-      <button class="text-xs px-3 py-1.5 border border-taupe/50 rounded text-taupe hover:border-danger hover:text-danger transition-colors font-mono">
-        Désactiver
+      <button
+        class="text-xs px-3 py-1.5 border border-taupe/50 rounded text-taupe hover:border-danger hover:text-danger transition-colors font-mono"
+        aria-label="Deactivate student"
+        title="Deactivate student"
+      >
+        <UserX className="h-4 w-4" aria-hidden="true" />
       </button>
     </div>
   );
@@ -19,11 +27,17 @@ const DisaBledStudentsAction = ({ onEdit }) => {
       <button
         class="text-xs px-3 py-1.5 border border-ink/30 rounded text-ink hover:bg-ink hover:text-cream transition-colors font-mono"
         onClick={onEdit}
+        aria-label="Modify student"
+        title="Modify student"
       >
-        Modifier
+        <Pencil className="h-4 w-4" aria-hidden="true" />
       </button>
-      <button class="text-xs px-3 py-1.5 border border-taupe/50 rounded text-taupe hover:border-danger hover:text-danger transition-colors font-mono">
-        Désactiver
+      <button
+        class="text-xs px-3 py-1.5 border border-taupe/50 rounded text-taupe hover:border-danger hover:text-danger transition-colors font-mono"
+        aria-label="Deactivate student"
+        title="Deactivate student"
+      >
+        <UserX className="h-4 w-4" aria-hidden="true" />
       </button>
     </div>
   );
