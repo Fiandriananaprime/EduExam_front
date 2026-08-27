@@ -115,8 +115,12 @@ export default function AdminDashboard() {
     return now >= start && now <= end;
   }).length;
 
-  const recentExams = [...exams].slice(0, 4);
-  const recentStudents = [...students].slice(0, 4);
+  const recentExams = [...exams]
+    .sort((a, b) => new Date(b.startDate) - new Date(a.startDate))
+    .slice(0, 4);
+  const recentStudents = [...students]
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .slice(0, 4);
 
   if (loading) {
     return (
@@ -291,7 +295,7 @@ export default function AdminDashboard() {
                 </tr>
               </thead>
               <tbody>
-                {attempts.slice(0, 5).map((a, i) => {
+                {attempts.slice(0, 4).map((a, i) => {
                   const hasMax = a.totalPoints > 0;
                   const pct = hasMax ? Math.round((a.score / a.totalPoints) * 100) : 0;
                   return (
