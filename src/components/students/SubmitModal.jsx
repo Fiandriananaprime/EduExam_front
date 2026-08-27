@@ -60,6 +60,7 @@ const SubmitModal = ({
             <button
               onClick={onConfirm}
               disabled={submitting}
+              data-testid="confirm-submit-button"
               className="px-4 py-2 bg-ink text-cream rounded-lg text-sm font-medium hover:bg-ink/80 transition-colors disabled:opacity-50"
             >
               {submitting ? 'Submitting...' : 'Confirm Submission'}

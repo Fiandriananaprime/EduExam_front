@@ -14,6 +14,7 @@ const LeaveModal = ({ isOpen, onClose, onConfirm, submitting }) => {
         <div className="flex gap-3 justify-end">
           <button
             onClick={onClose}
+            data-testid="cancel-leave-button"
             className="px-4 py-2 border border-ink/30 rounded-lg text-sm text-ink hover:bg-ink/5"
           >
             Continue Exam
@@ -21,6 +22,7 @@ const LeaveModal = ({ isOpen, onClose, onConfirm, submitting }) => {
           <button
             onClick={onConfirm}
             disabled={submitting}
+            data-testid="confirm-leave-button"
             className="px-4 py-2 bg-ink text-cream rounded-lg text-sm font-medium hover:bg-ink/80 transition-colors disabled:opacity-50"
           >
             {submitting ? 'Submitting...' : "Leave exam"}

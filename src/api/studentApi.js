@@ -19,18 +19,13 @@ const redirectToLogin = () => {
 };
 
 const throwApiError = async (response, fallbackMessage) => {
-  let data = {};
-
-  try {
-    data = await response.json();
-  } catch {
-  }
+  const data = await response.json().catch(() => null);
 
   if (response.status === 401) {
     redirectToLogin();
   }
 
-  throw new Error(data.message || fallbackMessage);
+  throw new Error(data?.message || fallbackMessage);
 };
 
 export const getMyExams = async () => {
