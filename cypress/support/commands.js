@@ -8,3 +8,13 @@ Cypress.Commands.add('loginAsStudent', () => {
     lastName: 'Dupont',
   }));
 });
+
+Cypress.Commands.add('visitAsAdmin', (path) => {
+  cy.visit(path, {
+    onBeforeLoad(win) {
+      win.localStorage.setItem('token', 'fake-jwt-token-admin');
+      win.localStorage.setItem('role', 'ADMIN');
+      win.localStorage.setItem('user', JSON.stringify({ id: 'ADM001', role: 'ADMIN' }));
+    },
+  });
+});
