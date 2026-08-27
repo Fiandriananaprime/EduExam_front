@@ -1,13 +1,21 @@
 import { useEffect, useState } from 'react';
-import { getStudents, getCourses, getExams, getExamResults } from '../../api/adminApi';
+import { useNavigate } from 'react-router-dom';
+import {
+  getStudents,
+  getCourses,
+  getExams,
+  getExamQuestions,
+  getExamResults,
+} from '../../api/adminApi';
 
-export default function AdminDashboard({ onNavigate }) {
+export default function AdminDashboard() {
   const [students, setStudents] = useState([]);
   const [courses, setCourses] = useState([]);
   const [exams, setExams] = useState([]);
   const [attempts, setAttempts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate()
 
   useEffect(() => {
     async function fetchData() {
@@ -30,13 +38,13 @@ export default function AdminDashboard({ onNavigate }) {
         const resultsPromises = fetchedExams.map(async (exam) => {
           try {
             const res = await getExamResults(exam.id);
-            if (!res || !res.students) return [];
-            return res.students
+            if (!res || !Array.isArray(res.results)) return [];
+            return res.results
               .filter((s) => s.submittedAt !== null && s.submittedAt !== undefined)
               .map((s) => ({
                 id: `${exam.id}-${s.studentId}`,
                 studentId: s.studentId,
-                studentName: s.studentName,
+                studentName: s.firstName ? `${s.firstName} ${s.name}` : s.name,
                 examId: exam.id,
                 examTitle: exam.title,
                 score: s.score,
@@ -52,18 +60,10 @@ export default function AdminDashboard({ onNavigate }) {
 
         const detailedAttemptsPromises = allAttempts.map(async (attempt) => {
           try {
-            const examDetail = await getExams(attempt.examId);
-            const detail = Array.isArray(examDetail)
-              ? examDetail.find((e) => e.id === attempt.examId)
-              : examDetail;
-
-            let totalPoints = 0;
-            if (detail && detail.questions) {
-              totalPoints = detail.questions.reduce(
-                (acc, q) => acc + (q.points || 0),
-                0
-              );
-            }
+            const questions = await getExamQuestions(attempt.examId);
+            const totalPoints = Array.isArray(questions)
+              ? questions.reduce((acc, question) => acc + (question.points || 0), 0)
+              : 0;
             return { ...attempt, totalPoints };
           } catch {
             return { ...attempt, totalPoints: 0 };
@@ -147,7 +147,7 @@ export default function AdminDashboard({ onNavigate }) {
           ].map((card) => (
             <button
               key={card.label}
-              onClick={() => onNavigate(card.nav)}
+              onClick={() => navigate(`/admin/${card.nav.replace('admin-', '')}`)}
               className={`text-left bg-paper border-2 rounded-xl px-5 py-5 hover:shadow-md transition-shadow group ${
                 card.highlight ? 'border-sage' : 'border-ink/20'
               }`}
@@ -170,7 +170,7 @@ export default function AdminDashboard({ onNavigate }) {
         </h2>
         <div className="flex flex-wrap gap-3">
           <button
-            onClick={() => onNavigate('admin-students')}
+            onClick={() => navigate('/admin/students')}
             className="flex items-center gap-2 px-4 py-2.5 bg-ink text-cream rounded-lg text-sm font-medium hover:bg-ink/80 transition-colors"
           >
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -179,7 +179,7 @@ export default function AdminDashboard({ onNavigate }) {
             Ajouter un étudiant
           </button>
           <button
-            onClick={() => onNavigate('admin-courses')}
+            onClick={() => navigate('/admin/courses')}
             className="flex items-center gap-2 px-4 py-2.5 border-2 border-ink text-ink rounded-lg text-sm font-medium hover:bg-ink/5 transition-colors"
           >
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -188,7 +188,7 @@ export default function AdminDashboard({ onNavigate }) {
             Créer un cours
           </button>
           <button
-            onClick={() => onNavigate('admin-exams')}
+            onClick={() => navigate('/admin/exams')}
             className="flex items-center gap-2 px-4 py-2.5 border-2 border-ink text-ink rounded-lg text-sm font-medium hover:bg-ink/5 transition-colors"
           >
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -204,7 +204,7 @@ export default function AdminDashboard({ onNavigate }) {
         <section>
           <div className="flex items-center justify-between mb-3">
             <h2 className="font-serif text-lg font-semibold text-ink">Examens récents</h2>
-            <button onClick={() => onNavigate('admin-exams')} className="text-sm text-sage hover:underline font-medium">
+            <button onClick={() => navigate('/admin/exams')} className="text-sm text-sage hover:underline font-medium">
               Voir tout →
             </button>
           </div>
@@ -236,7 +236,7 @@ export default function AdminDashboard({ onNavigate }) {
         <section>
           <div className="flex items-center justify-between mb-3">
             <h2 className="font-serif text-lg font-semibold text-ink">Étudiants récents</h2>
-            <button onClick={() => onNavigate('admin-students')} className="text-sm text-sage hover:underline font-medium">
+            <button onClick={() => navigate('/admin/students')} className="text-sm text-sage hover:underline font-medium">
               Voir tout →
             </button>
           </div>
