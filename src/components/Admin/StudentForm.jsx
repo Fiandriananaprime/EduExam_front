@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useToast } from "../../context/ToastContext";
 export const StudentForm = ({ onSave, onCancel }) => {
-   const [error, setError] = useState("");
+  const { showToast } = useToast();
   const handleSubmit = (event) => {
     event.preventDefault();
 
@@ -20,10 +20,9 @@ export const StudentForm = ({ onSave, onCancel }) => {
       !student.email ||
       !student.password
     ) {
-      setError("Please fill in all fields.");
+      showToast("Please fill in all fields.", "error");
       return;
     }
-    setError("");
     
     onSave(student);
   };
@@ -31,11 +30,6 @@ export const StudentForm = ({ onSave, onCancel }) => {
 
   return (
     <form onSubmit={handleSubmit}>
-       {error && (
-        <p className="mb-5 rounded-lg bg-red-100 px-4 py-3 text-sm text-red-700">
-          {error}
-        </p>
-      )}
       <div className="grid grid-cols-2 gap-5">
         <div className="flex flex-col gap-2">
           <label

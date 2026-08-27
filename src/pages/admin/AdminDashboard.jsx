@@ -7,6 +7,7 @@ import {
   getExamQuestions,
   getExamResults,
 } from '../../api/adminApi';
+import { useToast } from '../../context/ToastContext';
 
 export default function AdminDashboard() {
   const [students, setStudents] = useState([]);
@@ -14,7 +15,7 @@ export default function AdminDashboard() {
   const [exams, setExams] = useState([]);
   const [attempts, setAttempts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { showToast } = useToast();
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -77,14 +78,14 @@ export default function AdminDashboard() {
         );
         setAttempts(fullAttempts);
       } catch (err) {
-        setError(err.message || "Unable to load dashboard data");
+        showToast(err.message || "Unable to load dashboard data", "error");
       } finally {
         setLoading(false);
       }
     }
 
     fetchData();
-  }, []);
+  }, [showToast]);
 
   const now = new Date();
 
@@ -126,14 +127,6 @@ export default function AdminDashboard() {
     return (
       <div className="p-6 lg:p-8 max-w-7xl mx-auto text-center font-mono text-sm text-taupe">
         Loading dashboard data...
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="p-6 lg:p-8 max-w-7xl mx-auto text-center font-mono text-sm text-danger">
-        {error}
       </div>
     );
   }

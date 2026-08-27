@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Modal } from "../../components/Admin/Modal";
 import { ExamForm } from "../../components/Admin/ExamForm";
 import { TrExam } from "../../components/Admin/TrExam";
+import { useToast } from "../../context/ToastContext";
 
 import {
   getExams,
@@ -22,15 +23,13 @@ const AdminExams = () => {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
-  const [error, setError] = useState("");
+  const { showToast } = useToast();
 
   const [modal, setModal] = useState(null);
   const navigate = useNavigate();
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     setLoading(true);
-    setError("");
-
     try {
       const [examData, courseData] = await Promise.all([
         getExams(),
@@ -55,18 +54,17 @@ const AdminExams = () => {
       setExams(examsWithCounts);
       setCourses(Array.isArray(courseData) ? courseData : []);
     } catch (error) {
-      console.error(error);
-      setError(error.message);
+      showToast(error.message, "error");
     } finally {
       setLoading(false);
     }
-  };
+  }, [showToast]);
 
   useEffect(() => {
     // Loading data synchronizes the page with the backend response.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     loadData();
-  }, []);
+  }, [loadData]);
 
   const handleOpenCreate = () => {
     setModal("create");
@@ -126,8 +124,7 @@ const AdminExams = () => {
         currentExams.filter((currentExam) => currentExam.id !== exam.id),
       );
     } catch (error) {
-      console.error(error);
-      setError(error.message);
+      showToast(error.message, "error");
     }
   };
 
@@ -165,12 +162,6 @@ const AdminExams = () => {
       {courses.length === 0 && !loading && (
         <p className="mt-5 rounded-lg bg-cream px-4 py-3 font-mono text-sm text-taupe">
            Create a course first — every exam must belong to a course.
-        </p>
-      )}
-
-      {error && (
-        <p className="mt-5 rounded-lg bg-red-100 px-4 py-3 text-sm text-red-700">
-          {error}
         </p>
       )}
 

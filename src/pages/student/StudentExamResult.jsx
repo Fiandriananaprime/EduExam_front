@@ -21,7 +21,6 @@ const StudentResultPage = () => {
     location.state?.examResult || location.state?.result || null
   );
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchResultData = async () => {
@@ -42,7 +41,6 @@ const StudentResultPage = () => {
         }
 
       } catch (err) {
-        setError(err.message || "Failed to load result data");
         showToast(err.message || 'Failed to load result data', 'error');
       } finally {
         setLoading(false);
@@ -56,10 +54,6 @@ const StudentResultPage = () => {
 
   if (loading) {
     return <div className="p-8 text-center text-taupe font-mono animate-pulse">Loading results...</div>;
-  }
-
-  if (error) {
-    return <div className="p-8 text-center text-danger font-mono">Error: {error}</div>;
   }
 
   if (!exam || !examResult) {
