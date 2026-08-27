@@ -28,6 +28,7 @@ export default defineConfig([
         beforeEach: 'readonly',
         cy: 'readonly',
         describe: 'readonly',
+        expect: 'readonly',
         it: 'readonly',
       },
     },

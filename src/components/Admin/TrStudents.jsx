@@ -1,6 +1,6 @@
 import { Pencil, UserX } from "lucide-react";
 
-const EnabledStudentsAction = ({ onEdit }) => {
+const EnabledStudentsAction = ({ onEdit, onDeactivate }) => {
   return (
     <div class="flex items-center justify-end gap-2">
       <button
@@ -12,7 +12,9 @@ const EnabledStudentsAction = ({ onEdit }) => {
         <Pencil className="h-4 w-4" aria-hidden="true" />
       </button>
       <button
+        type="button"
         class="text-xs px-3 py-1.5 border border-taupe/50 rounded text-taupe hover:border-danger hover:text-danger transition-colors font-mono"
+        onClick={onDeactivate}
         aria-label="Deactivate student"
         title="Deactivate student"
       >
@@ -21,7 +23,7 @@ const EnabledStudentsAction = ({ onEdit }) => {
     </div>
   );
 };
-const DisaBledStudentsAction = ({ onEdit }) => {
+const DisaBledStudentsAction = ({ onEdit, onDeactivate }) => {
   return (
     <div class="flex items-center justify-end gap-2 opacity-60">
       <button
@@ -33,7 +35,9 @@ const DisaBledStudentsAction = ({ onEdit }) => {
         <Pencil className="h-4 w-4" aria-hidden="true" />
       </button>
       <button
+        type="button"
         class="text-xs px-3 py-1.5 border border-taupe/50 rounded text-taupe hover:border-danger hover:text-danger transition-colors font-mono"
+        onClick={onDeactivate}
         aria-label="Deactivate student"
         title="Deactivate student"
       >
@@ -42,13 +46,13 @@ const DisaBledStudentsAction = ({ onEdit }) => {
     </div>
   );
 };
-export const TrStudent = ({ name, email, status, result, id, onEdit }) => {
+export const TrStudent = ({ name, email, status, id, onEdit, onDeactivate }) => {
   if (status === "DISACTIVATED") {
     return (
       <tr className="px-5 py-3 opacity-60" key={id}>
         <td className="px-5 py-3 flex items-center gap-2">
           <div class="w-8 h-8 rounded-full bg-gold/50 border border-ink/20 flex items-center justify-center font-serif font-bold text-xs text-ink shrink-0">
-            {name[0]}
+            {name?.[0] || "?"}
           </div>
           <span className="font-medium text-ink">{name}</span>
         </td>
@@ -58,12 +62,11 @@ export const TrStudent = ({ name, email, status, result, id, onEdit }) => {
             {status}
           </span>
         </td>
-        <td className="px-5 py-3 font-mono text-xs text-ink">{result}</td>
         <td className="px-5 py-3">
             {status === "ACTIVE" ? (
-            <EnabledStudentsAction onEdit={onEdit} />
+            <EnabledStudentsAction onEdit={onEdit} onDeactivate={onDeactivate} />
           ) : (
-            <DisaBledStudentsAction onEdit={onEdit} />
+            <DisaBledStudentsAction onEdit={onEdit} onDeactivate={onDeactivate} />
           )}
         </td>
       </tr>
@@ -73,7 +76,7 @@ export const TrStudent = ({ name, email, status, result, id, onEdit }) => {
     <tr className="px-5 py-3" key={id}>
       <td className="px-5 py-3 flex items-center gap-2">
         <div class="w-8 h-8 rounded-full bg-gold/50 border border-ink/20 flex items-center justify-center font-serif font-bold text-xs text-ink shrink-0">
-          {name[0]}
+          {name?.[0] || "?"}
         </div>
         <span className="font-medium text-ink">{name}</span>
       </td>
@@ -83,12 +86,11 @@ export const TrStudent = ({ name, email, status, result, id, onEdit }) => {
           {status}
         </span>
       </td>
-      <td className="px-5 py-3 font-mono text-xs text-ink">{result}</td>
       <td className="px-5 py-3">
         {status === "ACTIVE" ? (
-          <EnabledStudentsAction onEdit={onEdit} />
+          <EnabledStudentsAction onEdit={onEdit} onDeactivate={onDeactivate} />
         ) : (
-          <DisaBledStudentsAction onEdit={onEdit} />
+          <DisaBledStudentsAction onEdit={onEdit} onDeactivate={onDeactivate} />
         )}
       </td>
     </tr>

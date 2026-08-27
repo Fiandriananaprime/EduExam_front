@@ -1,8 +1,8 @@
 import { useState } from "react";
 
-export const CourseForm = ({ onSave, onCancel }) => {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+export const CourseForm = ({ course, onSave, onCancel }) => {
+  const [title, setTitle] = useState(course?.title || "");
+  const [description, setDescription] = useState(course?.description || "");
   const [error, setError] = useState("");
 
   const handleSubmit = (event) => {
