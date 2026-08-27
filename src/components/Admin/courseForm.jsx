@@ -1,19 +1,18 @@
 import { useState } from "react";
+import { useToast } from "../../context/ToastContext";
 
 export const CourseForm = ({ course, onSave, onCancel }) => {
   const [title, setTitle] = useState(course?.title || "");
   const [description, setDescription] = useState(course?.description || "");
-  const [error, setError] = useState("");
+  const { showToast } = useToast();
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
     if (!title.trim() || !description.trim()) {
-      setError("Please fill in all fields.");
+      showToast("Please fill in all fields.", "error");
       return;
     }
-
-    setError("");
 
     const course = {
       title: title.trim(),
@@ -27,11 +26,6 @@ export const CourseForm = ({ course, onSave, onCancel }) => {
   return (
     <form onSubmit={handleSubmit}>
 
-      {error && (
-        <p className="mb-5 rounded-lg bg-red-100 px-4 py-3 text-sm text-red-700">
-          {error}
-        </p>
-      )}
 
       <div className="mb-6 flex flex-col gap-2">
         <label
@@ -79,14 +73,14 @@ export const CourseForm = ({ course, onSave, onCancel }) => {
           onClick={onCancel}
           className="rounded-lg border border-[#403D08]/30 px-5 py-3 text-[#403D08] hover:bg-[#403D08]/10"
         >
-          Annuler
+          Cancel
         </button>
 
         <button
           type="submit"
           className="rounded-lg bg-[#403D08] px-5 py-3 font-medium text-white hover:bg-[#514D0A]"
         >
-          Créer le cours
+          Create course
         </button>
 
       </div>

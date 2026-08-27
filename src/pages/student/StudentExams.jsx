@@ -12,13 +12,11 @@ import ExamCard from '../../components/students/ExamCard';
   const [availableExams, setAvailableExams] = useState([]);
   const [recentCompletedResults, setRecentCompletedResults] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        setError(null);
 
         const [examsData, resultsData] = await Promise.all([
           getMyExams(),
@@ -34,7 +32,6 @@ import ExamCard from '../../components/students/ExamCard';
 
         setRecentCompletedResults(sortedResults);
       } catch (err) {
-        setError(err.message || 'Failed to load dashboard data');
         showToast(err.message || 'Failed to load dashboard data', 'error');
       } finally {
         setLoading(false);
@@ -48,14 +45,6 @@ import ExamCard from '../../components/students/ExamCard';
     return (
       <div className="p-8 text-center font-mono text-sm text-taupe">
         Loading exams...
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="p-8 text-center text-red-600 font-medium">
-        Error: {error}
       </div>
     );
   }

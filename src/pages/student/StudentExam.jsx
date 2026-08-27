@@ -17,7 +17,6 @@ const StudentExamPage = () => {
 
   const [exam, setExam] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   const [answers, setAnswers] = useState(() => {
     if (!examId) return {};
@@ -60,7 +59,6 @@ const StudentExamPage = () => {
     const fetchExamData = async () => {
       try {
         setLoading(true);
-        setError(null);
 
         const data = await getMyExam(examId);
 
@@ -71,7 +69,6 @@ const StudentExamPage = () => {
           JSON.stringify(data)
         );
       } catch (err) {
-        setError(err.message || 'Failed to load exam.');
         showToast(
           err.message || 'Failed to load exam.',
           'error'
@@ -207,7 +204,7 @@ const StudentExamPage = () => {
     );
   }
 
-  if (error || !exam || examQuestions.length === 0) {
+  if (!exam || examQuestions.length === 0) {
     return (
       <div className="min-h-screen bg-cream flex items-center justify-center">
         <div className="text-center">
@@ -216,9 +213,7 @@ const StudentExamPage = () => {
           </div>
 
           <div className="font-medium text-ink">
-            {error || (!exam
-              ? 'Exam not found.'
-              : 'This exam has no questions yet.')}
+            {!exam ? 'Exam not found.' : 'This exam has no questions yet.'}
           </div>
 
           <button

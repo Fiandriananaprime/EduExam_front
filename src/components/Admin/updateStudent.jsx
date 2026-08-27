@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useToast } from "../../context/ToastContext";
 
 export const UpdateStudent = ({ student, onSave, onCancel }) => {
-  const [error, setError] = useState("");
+  const { showToast } = useToast();
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -16,25 +16,19 @@ export const UpdateStudent = ({ student, onSave, onCancel }) => {
       !modifiedStudent.lastName ||
       !modifiedStudent.email
     ) {
-      setError("Please fill in all fields.");
+      showToast("Please fill in all fields.", "error");
       return;
     }
-    setError("");
     onSave(student?.id, modifiedStudent);
     
   };
   
   return (
     <form onSubmit={handleSubmit}>
-      {error && (
-        <p className="mb-5 rounded-lg bg-red-100 px-4 py-3 text-sm text-red-700">
-          {error}
-        </p>
-      )}
       <div className="relative">
         <div className="flex items-center justify-between px-6 py-4 border-b border-rule">
           <h2 className="font-serif text-lg font-semibold text-ink">
-            Modifier l'étudiant
+            Edit student
           </h2>
           <button className="text-taupe hover:text-ink transition-colors">
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
@@ -52,7 +46,7 @@ export const UpdateStudent = ({ student, onSave, onCancel }) => {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block font-mono text-[0.68rem] tracking-widest uppercase text-sage mb-1">
-                  Prénom
+                  First name
                 </label>
                 <input
                   name="firstName"
@@ -63,7 +57,7 @@ export const UpdateStudent = ({ student, onSave, onCancel }) => {
               </div>
               <div>
                 <label className="block font-mono text-[0.68rem] tracking-widest uppercase text-sage mb-1">
-                  Nom
+                  Last name
                 </label>
                 <input
                   name="lastName"
@@ -75,7 +69,7 @@ export const UpdateStudent = ({ student, onSave, onCancel }) => {
             </div>
             <div>
               <label className="block font-mono text-[0.68rem] tracking-widest uppercase text-sage mb-1">
-                Adresse e-mail
+                Email address
               </label>
               <input
                 name="email"
@@ -91,10 +85,10 @@ export const UpdateStudent = ({ student, onSave, onCancel }) => {
               className="px-4 py-2 border border-ink/30 rounded-lg text-sm text-ink hover:bg-ink/5 transition-colors"
               onClick={onCancel}
             >
-              Annuler
+              Cancel
             </button>
             <button className="px-4 py-2 bg-ink text-cream rounded-lg text-sm font-medium hover:bg-ink/80 transition-colors">
-              Enregistrer
+              Save changes
             </button>
           </div>
         </div>

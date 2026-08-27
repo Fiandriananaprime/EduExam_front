@@ -7,6 +7,7 @@ import {
   getExamQuestions,
   getExamResults,
 } from '../../api/adminApi';
+import { useToast } from '../../context/ToastContext';
 
 export default function AdminDashboard() {
   const [students, setStudents] = useState([]);
@@ -14,7 +15,7 @@ export default function AdminDashboard() {
   const [exams, setExams] = useState([]);
   const [attempts, setAttempts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { showToast } = useToast();
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -77,14 +78,14 @@ export default function AdminDashboard() {
         );
         setAttempts(fullAttempts);
       } catch (err) {
-        setError(err.message || "Erreur lors du chargement des données");
+        showToast(err.message || "Unable to load dashboard data", "error");
       } finally {
         setLoading(false);
       }
     }
 
     fetchData();
-  }, []);
+  }, [showToast]);
 
   const now = new Date();
 
@@ -93,11 +94,11 @@ export default function AdminDashboard() {
     const end = new Date(exam.endDate);
 
     if (now < start) {
-      return { label: 'Programmé', cls: 'bg-gold/40 text-ink' };
+      return { label: 'Scheduled', cls: 'bg-gold/40 text-ink' };
     } else if (now >= start && now <= end) {
-      return { label: 'Disponible', cls: 'bg-sage/20 text-sage' };
+      return { label: 'Available', cls: 'bg-sage/20 text-sage' };
     } else {
-      return { label: 'Terminé', cls: 'bg-ink/10 text-taupe' };
+      return { label: 'Finished', cls: 'bg-ink/10 text-taupe' };
     }
   };
 
@@ -115,21 +116,17 @@ export default function AdminDashboard() {
     return now >= start && now <= end;
   }).length;
 
-  const recentExams = [...exams].slice(0, 4);
-  const recentStudents = [...students].slice(0, 4);
+  const recentExams = [...exams]
+    .sort((a, b) => new Date(b.startDate) - new Date(a.startDate))
+    .slice(0, 4);
+  const recentStudents = [...students]
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .slice(0, 4);
 
   if (loading) {
     return (
       <div className="p-6 lg:p-8 max-w-7xl mx-auto text-center font-mono text-sm text-taupe">
-        Chargement des données du tableau de bord...
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="p-6 lg:p-8 max-w-7xl mx-auto text-center font-mono text-sm text-danger">
-        {error}
+        Loading dashboard data...
       </div>
     );
   }
@@ -140,10 +137,10 @@ export default function AdminDashboard() {
       <section>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {[
-            { label: 'Étudiants', value: totalStudents, sub: 'inscrits', nav: 'admin-students' },
-            { label: 'Cours', value: totalCourses, sub: 'actifs', nav: 'admin-courses' },
-            { label: 'Examens', value: totalExams, sub: 'au total', nav: 'admin-exams' },
-            { label: 'Disponibles', value: availableExams, sub: 'en ce moment', nav: 'admin-exams', highlight: true },
+            { label: 'Students', value: totalStudents, sub: 'enrolled', nav: 'admin-students' },
+            { label: 'Courses', value: totalCourses, sub: 'active', nav: 'admin-courses' },
+            { label: 'Exams', value: totalExams, sub: 'in total', nav: 'admin-exams' },
+            { label: 'Available', value: availableExams, sub: 'right now', nav: 'admin-exams', highlight: true },
           ].map((card) => (
             <button
               key={card.label}
@@ -166,7 +163,7 @@ export default function AdminDashboard() {
       <section>
         <h2 className="font-serif text-lg font-semibold text-ink mb-3 flex items-center gap-2">
           <span className="w-5 h-px bg-ink inline-block" />
-          Actions rapides
+          Quick actions
         </h2>
         <div className="flex flex-wrap gap-3">
           <button
@@ -176,7 +173,7 @@ export default function AdminDashboard() {
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
             </svg>
-            Ajouter un étudiant
+            Add a student
           </button>
           <button
             onClick={() => navigate('/admin/courses')}
@@ -185,7 +182,7 @@ export default function AdminDashboard() {
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
             </svg>
-            Créer un cours
+            Create a course
           </button>
           <button
             onClick={() => navigate('/admin/exams')}
@@ -194,7 +191,7 @@ export default function AdminDashboard() {
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
             </svg>
-            Créer un examen
+            Create an exam
           </button>
         </div>
       </section>
@@ -203,14 +200,14 @@ export default function AdminDashboard() {
         {/* Recent exams */}
         <section>
           <div className="flex items-center justify-between mb-3">
-            <h2 className="font-serif text-lg font-semibold text-ink">Examens récents</h2>
+            <h2 className="font-serif text-lg font-semibold text-ink">Recent exams</h2>
             <button onClick={() => navigate('/admin/exams')} className="text-sm text-sage hover:underline font-medium">
-              Voir tout →
+              View all →
             </button>
           </div>
           <div className="bg-paper border-2 border-ink/20 rounded-xl overflow-hidden">
             {recentExams.length === 0 ? (
-              <div className="px-5 py-4 text-sm text-taupe font-mono">Aucun examen trouvé.</div>
+              <div className="px-5 py-4 text-sm text-taupe font-mono">No exams found.</div>
             ) : (
               recentExams.map((exam, i) => {
                 const status = getExamStatus(exam);
@@ -235,14 +232,14 @@ export default function AdminDashboard() {
         {/* Recent students */}
         <section>
           <div className="flex items-center justify-between mb-3">
-            <h2 className="font-serif text-lg font-semibold text-ink">Étudiants récents</h2>
+            <h2 className="font-serif text-lg font-semibold text-ink">Recent students</h2>
             <button onClick={() => navigate('/admin/students')} className="text-sm text-sage hover:underline font-medium">
-              Voir tout →
+              View all →
             </button>
           </div>
           <div className="bg-paper border-2 border-ink/20 rounded-xl overflow-hidden">
             {recentStudents.length === 0 ? (
-              <div className="px-5 py-4 text-sm text-taupe font-mono">Aucun étudiant trouvé.</div>
+              <div className="px-5 py-4 text-sm text-taupe font-mono">No students found.</div>
             ) : (
               recentStudents.map((s, i) => {
                 const fullName = s.firstName ? `${s.firstName} ${s.name}` : s.name;
@@ -264,7 +261,7 @@ export default function AdminDashboard() {
                     <span className={`font-mono text-xs px-2 py-1 rounded-md shrink-0 ${
                       isActive ? 'bg-sage/15 text-sage' : 'bg-ink/10 text-taupe'
                     }`}>
-                      {isActive ? 'Actif' : 'Désactivé'}
+                      {isActive ? 'Active' : 'Deactivated'}
                     </span>
                   </div>
                 );
@@ -276,22 +273,22 @@ export default function AdminDashboard() {
 
       {/* Recent results */}
       <section>
-        <h2 className="font-serif text-lg font-semibold text-ink mb-3">Résultats récents</h2>
+        <h2 className="font-serif text-lg font-semibold text-ink mb-3">Recent results</h2>
         <div className="bg-paper border-2 border-ink/20 rounded-xl overflow-x-auto">
           {attempts.length === 0 ? (
-            <div className="px-5 py-4 text-sm text-taupe font-mono">Aucun résultat récent.</div>
+            <div className="px-5 py-4 text-sm text-taupe font-mono">No recent results.</div>
           ) : (
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-rule">
-                  <th className="text-left px-5 py-3 font-mono text-xs uppercase tracking-wider text-taupe">Étudiant</th>
-                  <th className="text-left px-5 py-3 font-mono text-xs uppercase tracking-wider text-taupe">Examen</th>
+                  <th className="text-left px-5 py-3 font-mono text-xs uppercase tracking-wider text-taupe">Student</th>
+                  <th className="text-left px-5 py-3 font-mono text-xs uppercase tracking-wider text-taupe">Exam</th>
                   <th className="text-left px-5 py-3 font-mono text-xs uppercase tracking-wider text-taupe">Score</th>
                   <th className="text-left px-5 py-3 font-mono text-xs uppercase tracking-wider text-taupe">Date</th>
                 </tr>
               </thead>
               <tbody>
-                {attempts.slice(0, 5).map((a, i) => {
+                {attempts.slice(0, 4).map((a, i) => {
                   const hasMax = a.totalPoints > 0;
                   const pct = hasMax ? Math.round((a.score / a.totalPoints) * 100) : 0;
                   return (

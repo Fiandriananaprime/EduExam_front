@@ -9,11 +9,12 @@ import {
 } from "../../api/adminApi";
 import { CreateButton } from "../../components/Admin/CreateButton";
 import { CourseCard } from "../../components/Admin/CourseCard";
+import { useToast } from "../../context/ToastContext";
 const AdminCourses = () => {
   const [courses, setCourses] = useState([]);
   const [modal, setModal] = useState(null);
-  const [error, setError] = useState("");
   const [selectedCourse, setSelectedCourse] = useState(null);
+  const { showToast } = useToast();
 
   useEffect(() => {
     const loadCourses = async () => {
@@ -21,14 +22,13 @@ const AdminCourses = () => {
         const data = await getCourses();
 
         setCourses(Array.isArray(data) ? data : []);
-      } catch (error) {
-        console.error(error);
-        setError("Unable to load courses.");
+      } catch {
+        showToast("Unable to load courses.", "error");
       }
     };
 
     loadCourses();
-  }, []);
+  }, [showToast]);
 
   const handleCreateCourse = async (course) => {
     try {
@@ -37,9 +37,8 @@ const AdminCourses = () => {
       setCourses((currentCourses) => [...currentCourses, newCourse]);
 
       setModal(null);
-    } catch (error) {
-      console.error(error);
-      setError("Unable to create the course.");
+    } catch {
+      showToast("Unable to create the course.", "error");
     }
   };
   const handleOpenCreateModal = () => {
@@ -59,9 +58,8 @@ const AdminCourses = () => {
         course.id === updated.id ? updated : course
       )));
       handleCloseModal();
-    } catch (error) {
-      console.error(error);
-      setError("Unable to update the course.");
+    } catch {
+      showToast("Unable to update the course.", "error");
     }
   };
 
@@ -75,9 +73,8 @@ const AdminCourses = () => {
       setCourses((currentCourses) => currentCourses.filter(
         (currentCourse) => currentCourse.id !== course.id,
       ));
-    } catch (error) {
-      console.error(error);
-      setError("Unable to delete the course.");
+    } catch {
+      showToast("Unable to delete the course.", "error");
     }
   };
 
@@ -90,16 +87,11 @@ const AdminCourses = () => {
     <div className="p-6 lg:p-8 max-w-7xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 class="font-serif text-2xl font-semibold text-ink">Cours</h1>
+            <h1 class="font-serif text-2xl font-semibold text-ink">Courses</h1>
           <p class="text-sm text-taupe mt-1 font-mono">{courses.length} created courses</p>
         </div>
         <CreateButton onClick={handleOpenCreateModal} purpose={"Create courses"} />
       </div>
-      {error && (
-        <p className="rounded-lg bg-red-100 px-4 py-3 text-sm text-red-700">
-          {error}
-        </p>
-      )}
       <div className="grid gap-3">
           {courses.map((course) => (
           <CourseCard
@@ -111,7 +103,7 @@ const AdminCourses = () => {
         ))}
       </div>
       {modal === "create-course" && (
-        <Modal title="Créer un cours" onClose={handleCloseModal}>
+        <Modal title="Create course" onClose={handleCloseModal}>
           <CourseForm
             onSave={handleCreateCourse}
             onCancel={handleCloseModal}
@@ -119,7 +111,7 @@ const AdminCourses = () => {
         </Modal>
       )}
       {modal === "edit-course" && selectedCourse && (
-        <Modal title="Modifier un cours" onClose={handleCloseModal}>
+        <Modal title="Edit course" onClose={handleCloseModal}>
           <CourseForm
             course={selectedCourse}
             onSave={handleUpdateCourse}

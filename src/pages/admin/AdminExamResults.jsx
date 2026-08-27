@@ -1,17 +1,18 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getExamResults } from "../../api/adminApi";
+import { useToast } from "../../context/ToastContext";
 
 const AdminExamResults = () => {
     const { id } = useParams();
     const [data, setData] = useState({ results: [], attemptsCount: 0, average: 0 });
-    const [error, setError] = useState("");
+    const { showToast } = useToast();
 
     useEffect(() => {
         getExamResults(id)
             .then((response) => setData(response || { results: [], attemptsCount: 0, average: 0 }))
-            .catch((err) => setError(err.message));
-    }, [id]);
+            .catch((err) => showToast(err.message, "error"));
+    }, [id, showToast]);
 
     return (
         <section className="space-y-6">
@@ -21,7 +22,6 @@ const AdminExamResults = () => {
                     {data.attemptsCount} attempt(s) · Average: {Number(data.average || 0).toFixed(2)}
                 </p>
             </div>
-            {error && <p className="rounded-lg bg-red-100 px-4 py-3 text-sm text-red-700">{error}</p>}
             <div className="overflow-hidden rounded-xl border-2 border-ink/20 bg-paper">
                 <table className="w-full text-sm">
                     <thead>
