@@ -1,7 +1,6 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
 
 import Login from "./pages/Login";
-import Unauthorized from "./pages/Unauthorized";
 
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminStudents from "./pages/admin/AdminStudents";
@@ -87,11 +86,6 @@ const router = createBrowserRouter([
       element: <StudentExam />,
     },
     ]
-  },
-
-  {
-    path: "/unauthorized",
-    element: <Unauthorized />,
   },
 ]);
 

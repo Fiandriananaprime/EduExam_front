@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { getResultById } from '../../api/studentApi';
+import { getMyExam, getResultById } from '../../api/studentApi';
 import { useToast } from '../../context/ToastContext';
 
 const StudentResultPage = () => {
@@ -15,10 +15,17 @@ const StudentResultPage = () => {
       return null;
     }
   })();
+  const storedResult = (() => {
+    try {
+      return JSON.parse(sessionStorage.getItem(`result-${examId}`));
+    } catch {
+      return null;
+    }
+  })();
 
   const [exam, setExam] = useState(location.state?.exam || storedExam);
   const [examResult, setExamResult] = useState(
-    location.state?.examResult || location.state?.result || null
+    location.state?.examResult || location.state?.result || storedResult || null
   );
   const [loading, setLoading] = useState(true);
 
@@ -33,11 +40,24 @@ const StudentResultPage = () => {
         }
 
         if (!exam) {
-          setExam({
-            title: currentResult.examTitle,
-            description: currentResult.courseCode,
-            questions: [],
-          });
+          try {
+            const examData = await getMyExam(examId);
+            setExam(examData);
+          } catch {
+            setExam({
+              id: examId,
+              title: currentResult.examTitle || currentResult.title || `Exam #${examId}`,
+              description: currentResult.courseCode,
+              questions: (currentResult.corrections || currentResult.correction || []).map(
+                (correction) => ({
+                  id: correction.questionId,
+                  statement: correction.statement,
+                  points: correction.points,
+                  choices: correction.choices || [],
+                })
+              ),
+            });
+          }
         }
 
       } catch (err) {
@@ -69,10 +89,10 @@ const StudentResultPage = () => {
   }
 
   const score = Number(examResult.score) || 0;
-  const maxScore = Number(examResult.maxScore);
+  const maxScore = Number(examResult.totalPoints);
   const hasMaxScore = Number.isFinite(maxScore) && maxScore > 0;
   const pct = hasMaxScore ? Math.round((score / maxScore) * 100) : 0;
-  const corrections = examResult.corrections || [];
+  const corrections = examResult.corrections || examResult.correction || [];
   const correctCount = corrections.filter(c => c.isCorrect).length;
   const incorrectCount = corrections.filter(
     c => !c.isCorrect && c.selectedChoiceId != null
@@ -135,6 +155,16 @@ const StudentResultPage = () => {
             const choices = question?.choices || correction.choices || [];
             const selectedId = correction.selectedChoiceId;
             const correctId = correction.correctChoiceId;
+            const selectedChoice = choices.find(
+              (choice) => String(choice.id) === String(selectedId)
+            );
+            const correctChoice = choices.find(
+              (choice) => String(choice.id) === String(correctId)
+            );
+            const selectedChoiceText =
+              selectedChoice?.text || correction.selectedChoiceText;
+            const correctChoiceText =
+              correctChoice?.text || correction.correctChoiceText;
 
             const isCorrect = correction.isCorrect;
             const isUnanswered = selectedId == null;
@@ -183,11 +213,19 @@ const StudentResultPage = () => {
                         className={`px-4 py-3 border-2 rounded-lg flex items-center justify-between text-sm ${choiceStyles}`}
                       >
                         <span>{choice.text}</span>
-                        {isTheCorrectChoice && <span className="ml-auto font-bold text-sage">✓ Correct</span>}
+                        {isTheCorrectChoice && <span className="ml-auto font-bold text-sage">✓ Correct choice</span>}
+                        {isTheSelectedChoice && isCorrect && <span className="ml-auto font-bold text-sage">✓ Your choice</span>}
                         {isTheSelectedChoice && !isCorrect && <span className="ml-auto font-bold text-danger">✗ Your choice</span>}
                       </div>
                     );
                   })}
+
+                  {choices.length === 0 && (selectedChoiceText || correctChoiceText) && (
+                    <div className="space-y-1 font-mono text-xs text-taupe">
+                      {selectedChoiceText && <div>Your choice: {selectedChoiceText}</div>}
+                      {correctChoiceText && <div>Correct choice: {correctChoiceText}</div>}
+                    </div>
+                  )}
 
                   {isUnanswered && (
                     <div className="mt-3 font-mono text-xs text-taupe px-4 py-2 border border-dashed border-taupe/30 rounded-lg">

@@ -46,7 +46,10 @@ const AdminExams = () => {
           return {
             ...exam,
             questionCount: Array.isArray(questions) ? questions.length : 0,
-            attemptsCount: results?.attemptsCount ?? 0,
+            attemptsCount:
+              results?.attemptsCount ??
+              results?.attemptCount ??
+              (Array.isArray(results?.results) ? results.results.length : 0),
           };
         }),
       );
