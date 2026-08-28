@@ -75,7 +75,7 @@ const StudentResults = () => {
               <tbody>
                 {attempts.map((a, i) => {
                   const score = Number(a.score) || 0;
-                  const maxScore = Number(a.maxScore);
+                  const maxScore = Number(a.totalPoints);
                   const hasMaxScore = Number.isFinite(maxScore) && maxScore > 0;
                   const percentage = hasMaxScore ? Math.round((score / maxScore) * 100) : 0;
                   const passed = percentage >= 50;
@@ -84,7 +84,7 @@ const StudentResults = () => {
                     <tr key={`${a.examId}-${a.submittedAt}`} className={i > 0 ? 'border-t border-rule' : ''}>
                       <td className="px-5 py-3">
                         <div className="font-medium text-ink max-w-[200px] truncate">
-                          {a.examTitle || `Exam #${a.examId}`}
+                          {a.examTitle || a.title || `Exam #${a.examId}`}
                         </div>
                       </td>
                       <td className="px-5 py-3 font-mono text-xs text-taupe">
