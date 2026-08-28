@@ -7,6 +7,10 @@ const AdminExamResults = () => {
     const { id } = useParams();
     const [data, setData] = useState({ results: [], attemptsCount: 0, average: 0 });
     const { showToast } = useToast();
+    const attemptsCount =
+        data.attemptsCount ??
+        data.attemptCount ??
+        (Array.isArray(data.results) ? data.results.length : 0);
 
     useEffect(() => {
         getExamResults(id)
@@ -19,7 +23,7 @@ const AdminExamResults = () => {
             <div>
                 <h1 className="font-serif text-2xl font-semibold text-ink">Exam Results</h1>
                 <p className="mt-1 font-mono text-sm text-taupe">
-                    {data.attemptsCount} attempt(s) · Average: {Number(data.average || 0).toFixed(2)}
+                    {attemptsCount} attempt(s) · Average: {Number(data.average || 0).toFixed(2)}
                 </p>
             </div>
             <div className="overflow-hidden rounded-xl border-2 border-ink/20 bg-paper">

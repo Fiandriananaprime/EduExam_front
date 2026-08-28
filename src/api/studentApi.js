@@ -28,6 +28,39 @@ const throwApiError = async (response, fallbackMessage) => {
   throw new Error(data?.message || fallbackMessage);
 };
 
+const normalizeResult = (result) => {
+  if (!result) return result;
+
+  const corrections = result.corrections || result.correction;
+  const examTitle = result.examTitle || result.exam_title || result.title;
+  const totalPoints = result.totalPoints ?? result.total_points ?? result.maxScore;
+
+  return {
+    ...result,
+    examTitle,
+    totalPoints,
+    maxScore: totalPoints,
+    corrections: Array.isArray(corrections)
+      ? corrections.map((correction) => ({
+          ...correction,
+          questionId: correction.questionId ?? correction.question_id,
+          selectedChoiceId:
+            correction.selectedChoiceId ??
+            correction.studentChoiceId ??
+            correction.student_choice_id,
+          correctChoiceId:
+            correction.correctChoiceId ?? correction.correct_choice_id,
+          selectedChoiceText:
+            correction.selectedChoiceText ?? correction.studentChoiceText,
+          correctChoiceText: correction.correctChoiceText,
+          pointsEarned:
+            correction.pointsEarned ??
+            (correction.isCorrect ? correction.points : 0),
+        }))
+      : corrections,
+  };
+};
+
 export const getMyExams = async () => {
   const response = await fetch(`${API_URL}/my/exams`, {
     headers: getAuthHeaders(),
@@ -49,7 +82,8 @@ export const getMyExam = async (id) => {
     await throwApiError(response, "Failed to fetch exam");
   }
 
-  return response.json();
+  const result = await response.json();
+  return normalizeResult(result);
 };
 
 export const submitExam = async (id, answers) => {
@@ -63,7 +97,16 @@ export const submitExam = async (id, answers) => {
     await throwApiError(response, "Failed to submit exam");
   }
 
-  return response.json();
+  const result = await response.json();
+  const normalizedResult = normalizeResult(result);
+
+  try {
+    sessionStorage.setItem(`result-${id}`, JSON.stringify(normalizedResult));
+  } catch {
+    return normalizedResult;
+  }
+
+  return normalizedResult;
 };
 
 export const getMyResults = async () => {
@@ -75,7 +118,8 @@ export const getMyResults = async () => {
     await throwApiError(response, "Failed to fetch results");
   }
 
-  return response.json();
+  const results = await response.json();
+  return Array.isArray(results) ? results.map(normalizeResult) : results;
 };
 
 export const getResultById = async (examId) => {
