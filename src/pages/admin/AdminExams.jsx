@@ -14,6 +14,7 @@ import {
   deleteExam,
   getExamQuestions,
   getExamResults,
+  createExamQuestion,
 } from "../../api/adminApi";
 
 const AdminExams = () => {
@@ -85,9 +86,24 @@ const AdminExams = () => {
     setSubmitting(true);
 
     try {
-      const newExam = await createExam(exam);
+      const { questions, ...examData } = exam;
+      const createdExam = await createExam(examData);
 
-      setExams((currentExams) => [...currentExams, newExam]);
+      if (Array.isArray(questions) && questions.length > 0) {
+        await Promise.all(
+          questions.map((question) =>
+            createExamQuestion(createdExam.id, {
+              ...question,
+              choices: question.choices.map((choice) => ({
+                text: choice.text,
+                isCorrect: Boolean(choice.isCorrect),
+              })),
+            }),
+          ),
+        );
+      }
+
+      setExams((currentExams) => [...currentExams, createdExam]);
 
       setModal(null);
       showToast("Exam created successfully.", "success");
