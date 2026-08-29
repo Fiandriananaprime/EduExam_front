@@ -45,11 +45,12 @@ const AdminStudent = () => {
       const search = searchTerm.trim().toLowerCase();
       const status = student.isActive ? "ACTIVE" : "DISACTIVATED";
       const matchesStatus = statusFilter === "ALL" || status === statusFilter;
+      const studentName = student.name ?? student.lastName ?? "";
 
       return matchesStatus && (
         !search ||
         student.firstName?.toLowerCase().includes(search) ||
-        student.lastName?.toLowerCase().includes(search) ||
+        studentName.toLowerCase().includes(search) ||
         student.email?.toLowerCase().includes(search)
       );
     })
@@ -73,9 +74,9 @@ const AdminStudent = () => {
     }
   };
   const handleDeactivate = async (student) => {
-    const confirmed = window.confirm(
-      `Deactivate student "${student.firstName} ${student.lastName}"?`,
-    );
+    const studentName = student.name ?? student.lastName ?? "";
+    const fullName = `${student.firstName || ""} ${studentName}`.trim();
+    const confirmed = window.confirm(`Deactivate student "${fullName || "Student"}"?`);
 
     if (!confirmed) return;
 
@@ -182,7 +183,7 @@ const AdminStudent = () => {
               {filteredStudents.map((student) => {
                 return (
                   <TrStudent
-                    name={`${student.firstName || ""} ${student.lastName || ""}`.trim() || "Student"}
+                    name={`${student.firstName || ""} ${student.name ?? student.lastName ?? ""}`.trim() || "Student"}
                     status={student.isActive ? "ACTIVE" : "DISACTIVATED"}
                     email={student.email}
                     id={student.id}

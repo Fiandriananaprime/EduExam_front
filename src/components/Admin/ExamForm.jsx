@@ -180,10 +180,12 @@ export const ExamForm = ({
       })),
     }));
 
-    const questionValidationError = validateQuestions(normalizedQuestions);
-    if (questionValidationError) {
-      showToast(questionValidationError, "error");
-      return;
+    if (!exam) {
+      const questionValidationError = validateQuestions(normalizedQuestions);
+      if (questionValidationError) {
+        showToast(questionValidationError, "error");
+        return;
+      }
     }
 
     try {
