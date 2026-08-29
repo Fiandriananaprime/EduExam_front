@@ -8,7 +8,7 @@ export const StudentForm = ({ onSave, onCancel }) => {
 
     const student = {
       firstName: formData.get("firstName")?.trim() || "",
-      lastName: formData.get("lastName")?.trim() || "",
+      name: formData.get("lastName")?.trim() || "",
       email: formData.get("email")?.trim() || "",
       password: formData.get("password")?.trim() || "",
       status: "ACTIVE"
@@ -16,7 +16,7 @@ export const StudentForm = ({ onSave, onCancel }) => {
 
     if (
       !student.firstName ||
-      !student.lastName ||
+      !student.name ||
       !student.email ||
       !student.password
     ) {
