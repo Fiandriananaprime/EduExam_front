@@ -8,12 +8,12 @@ export const UpdateStudent = ({ student, onSave, onCancel }) => {
 
     const modifiedStudent = {
       firstName: data.get("firstName")?.trim() || "",
-      lastName: data.get("lastName")?.trim() || "",
+      name: data.get("lastName")?.trim() || "",
       email: data.get("email")?.trim() || "",
     };
     if (
       !modifiedStudent.firstName ||
-      !modifiedStudent.lastName ||
+      !modifiedStudent.name ||
       !modifiedStudent.email
     ) {
       showToast("Please fill in all fields.", "error");
@@ -61,7 +61,7 @@ export const UpdateStudent = ({ student, onSave, onCancel }) => {
                 </label>
                 <input
                   name="lastName"
-                  defaultValue={student?.lastName || ""}
+                  defaultValue={student?.name ?? student?.lastName ?? ""}
                   className="w-full border-[1.5px] border-ink rounded-md bg-cream px-3 py-2 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-sage"
                   placeholder="Rakotomalala"
                 />
@@ -87,7 +87,10 @@ export const UpdateStudent = ({ student, onSave, onCancel }) => {
             >
               Cancel
             </button>
-            <button className="px-4 py-2 bg-ink text-cream rounded-lg text-sm font-medium hover:bg-ink/80 transition-colors">
+            <button
+              type="submit"
+              className="px-4 py-2 bg-ink text-cream rounded-lg text-sm font-medium hover:bg-ink/80 transition-colors"
+            >
               Save changes
             </button>
           </div>

@@ -11,7 +11,6 @@ export const StudentForm = ({ onSave, onCancel }) => {
       name: formData.get("lastName")?.trim() || "",
       email: formData.get("email")?.trim() || "",
       password: formData.get("password")?.trim() || "",
-      status: "ACTIVE"
     };
 
     if (
